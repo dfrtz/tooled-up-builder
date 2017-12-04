@@ -32,6 +32,12 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
      * Must be called at end of assignments.
      */
     function init() {
+        if (window.Worker) {
+            console.log("Web Worker support detected. Multithreading enabled.");
+        } else {
+            console.log("Web Workers are not supported by your browser. Try with the latest Google Chrome: <a href=\"https://www.google.com/chrome/\">Google Chrome Download</a>");
+        }
+
         $http({
             //TODO Non request way to load this library into worker pools
             url: 'vendor/jszip/3.1.3/jszip.min.js',
@@ -52,7 +58,7 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
     /**
      * Toggles navigation drawer and calls listening functions.
      *
-     * @param {*} side Angular representation of the Drawer that was toggled.
+     * @param {string} side Directional representation of the Drawer that was toggled. Left or Right.
      */
     self.onToggleDrawer = function (side) {
         $mdSidenav(side)
@@ -159,7 +165,6 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
         $mdToast.show(toast);
     };
 
-    // Wrapper functions for DOM access
     $scope.getThemeColor = $mdColors.getThemeColor;
     $scope.range = function (count) {
         return Solari.utils.range(count);
@@ -170,5 +175,6 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
     $scope.getFileExtension = function (name) {
         return Solari.file.getExtension(name);
     };
+
     init();
 }

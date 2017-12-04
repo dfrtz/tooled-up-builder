@@ -1,3 +1,12 @@
+/**
+ * @file A Tooled Up - Builder app controller to view and edit Card hitbox Coordinate data.
+ *
+ * @author David Fritz
+ * @version 1.0.0
+ *
+ * @copyright 2015-2017 Solari Studios, http://solaristudios.com
+ * @license MIT
+ */
 angular.module('tooledUpBuilder').controller('TubDialogCardHitboxEditCtrl', ['$scope', '$mdDialog', 'card', 'version', 'hitbox', 'getCachedImageByName', '$mdToast', '$timeout', TubDialogCardHitboxEditCtrl]);
 
 function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, getCachedImageByName, $mdToast, $timeout) {
@@ -5,15 +14,12 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
 
     self.versionIndex = version;
     self.hitboxIndex = hitbox;
-
     self.card = card;
     self.activeVersion = self.card.versions[version];
     self.activeHitbox = self.activeVersion.hitboxes[hitbox];
-
     self.canvases = [];
     self.canvasLock = true;
     self.coords = [];
-
     self.selectedCoord = undefined;
 
     var flipperCtrl;
@@ -96,7 +102,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         for (var i = 0; i < self.coords.length; i++) {
             var coord = self.coords[i];
 
-            if (side == coord.z) {
+            if (side === coord.z) {
                 canvas.addCoordinate(coord);
             }
         }
@@ -199,7 +205,12 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
 
         return "data:image/png;base64," + image.data;
     };
-
+    
+    /**
+     * Provides fractional representation of card ratio based on orientation.
+     *
+     * @returns {string} Fractional value representing image ratio.
+     */
     self.getImageRatio = function () {
         if (card.landscape) {
             return "4/3";
@@ -294,13 +305,13 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
             return;
         }
 
-        if (direction == 'u') {
+        if (direction === 'u') {
             self.posGetterSetter('y', self.selectedCoord.y - 1);
-        } else if (direction == 'd') {
+        } else if (direction === 'd') {
             self.posGetterSetter('y', self.selectedCoord.y + 1);
-        } else if (direction == 'l') {
+        } else if (direction === 'l') {
             self.posGetterSetter('x', self.selectedCoord.x - 1);
-        } else if (direction == 'r') {
+        } else if (direction === 'r') {
             self.posGetterSetter('x', self.selectedCoord.x + 1);
         }
     };

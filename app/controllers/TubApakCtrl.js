@@ -32,23 +32,15 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
     ];
     self.pendingData = 0;
 
-    $scope.$on('sendToAIO', receivePack);
-    document.getElementById('apak-file-input').addEventListener('change', function () {
-        Solari.ui.onSelectFiles(event, loadFiles);
-    });
-
     /**
      * Initializes controller by executing first run operations.
      *
      * Must be called at end of assignments.
      */
     function init() {
-        /* Check if browser supports Worker for multithreading or not */
-        if (window.Worker) {
-            console.log("Web Worker support detected. Multithreading enabled.");
-        } else {
-            console.log("Web Workers are not supported by your browser. Try with the latest Google Chrome: <a href=\"https://www.google.com/chrome/\">Google Chrome Download</a>");
-        }
+        document.getElementById('apak-file-input').addEventListener('change', function () {
+            Solari.ui.onSelectFiles(event, loadFiles);
+        });
     }
 
     /**
@@ -398,14 +390,15 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
             // Show undo toast
             var toast = $mdToast.simple()
                 .textContent('Removed ' + path)
+                //.action('UNDO')
                 .highlightAction(true)
                 .highlightClass('md-accent')
                 .position("bottom right")
                 .hideDelay(3000);
 
-            //TODO allow user to revert delete
             $mdToast.show(toast).then(function (response) {
                 if (response === 'ok') {
+                    //TODO allow user to revert delete
                 }
             });
         }, function cancel() {
@@ -514,14 +507,15 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
             // Show undo toast
             var toast = $mdToast.simple()
                 .textContent('Removed all ' + tab.subtitle)
+                //.action('UNDO')
                 .highlightAction(true)
                 .highlightClass('md-accent')
                 .position("bottom right")
                 .hideDelay(3000);
 
-            //TODO allow user to undo pack type reset
             $mdToast.show(toast).then(function (response) {
                 if (response === 'ok') {
+                    //TODO allow user to undo pack type reset
                 }
             });
         }, function cancel() {
@@ -536,6 +530,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         var dialog = $mdDialog.confirm()
             .title('Reset All Packs')
             .textContent('Delete all packs? (Cannot be undone)')
+            //.action('UNDO')
             .targetEvent(event)
             .ok("Delete All")
             .cancel("Cancel");
@@ -556,9 +551,9 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                 .position("bottom right")
                 .hideDelay(3000);
 
-            //TODO allow user to undo full pack reset
             $mdToast.show(toast).then(function (response) {
                 if (response === 'ok') {
+                    //TODO allow user to undo full pack reset
                 }
             });
         }, function cancel() {
@@ -619,14 +614,6 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         return MainData.getImageByIndex(pack, index, $scope);
     };
 
-    $scope.$watch(function () {
-        return pack.packData.title;
-    }, function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            $scope.$apply();
-        }
-    });
-
     /**
      * Receives a data pack from another controller.
      *
@@ -660,9 +647,9 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                     .position("bottom right")
                     .hideDelay(3000);
 
-                //TODO allow user to undo replacement
                 $mdToast.show(toast).then(function (response) {
                     if (response === 'ok') {
+                        //TODO allow user to undo replacement
                     }
                 });
             }, function cancel() {
@@ -673,6 +660,15 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
             onLoad({name: args.path}, args.data);
         }
     }
+
+    $scope.$on('sendToAIO', receivePack);
+    $scope.$watch(function () {
+        return pack.packData.title;
+    }, function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+            $scope.$apply();
+        }
+    });
 
     init();
 }
