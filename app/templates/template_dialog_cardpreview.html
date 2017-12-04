@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<md-dialog style="overflow: hidden" aria-label="Previewing Card">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <div layout="column">
+                    <span class="md-title">Previewing {{card.title}}</span>
+                    <span class="md-caption" ng-hide="{{!card.legacy}}">{{card.legacy}}</span>
+                </div>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon class="material-icons step" aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content style="overflow: hidden">
+            <div class="md-dialog-content">
+                <div layout="row">
+                    <sol-flipper style="width: 100%; height: 100%; object-fit: contain; display: block; margin: auto;" flip-width="66%" flip-height="66%" ratio="{{getImageRatio()}}">
+                        <!-- TODO: Remove 2 sides limit -->
+                        <sol-flip-panel ng-repeat="image in card.content | limitTo:2 track by $index">
+                            <img style="width: 100%; height: 100%; object-fit: contain; display: block; margin: auto;" data-ng-src="{{getImage(image)}}"/>
+                        </sol-flip-panel>
+                    </sol-flipper>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <!--<md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button ng-click="cancel()">
+                Dismiss
+            </md-button>
+            <span flex></span>
+        </md-dialog-actions>-->
+    </form>
+</md-dialog>

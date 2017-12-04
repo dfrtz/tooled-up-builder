@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tooled Up - Pack Builder</title>
+
+    <link rel="stylesheet" href="vendor/bootstrap/3.3.7/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/bootstrap/3.3.7/bootstrap-theme.min.css">
+
+    <link rel="stylesheet" href="vendor/mdl/1.2.1/material.min.css">
+
+    <link rel="stylesheet" href="vendor/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="styles/roboto-fonts.css">
+    <link rel="stylesheet" href="styles/material-icons.css">
+
+    <link rel="stylesheet" href="styles/sol-base.css">
+
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="vendor/angularjs/1.5.5/angular.min.js"></script>
+    <script src="vendor/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="vendor/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="vendor/angularjs/1.5.5/angular-messages.min.js"></script>
+    <script src="vendor/angularjs/1.5.5/angular-route.min.js"></script>
+    <script src="vendor/angularjs/1.5.5/angular-sanitize.min.js"></script>
+    <script src="vendor/angular_material/1.1.0/angular-material.min.js"></script>
+
+    <!-- 3rd Party Form Libraries -->
+    <script src="vendor/tv4.min.js"></script>
+    <script src="vendor/ObjectPath.js"></script>
+    <script src="vendor/json_schema_form/schema-form.js"></script>
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+    <script src="vendor/bootstrap/3.3.7/bootstrap-decorator.min.js"></script>
+
+    <!-- Application libraries -->
+    <script src="scripts/sol-core.js"></script>
+    <script src="scripts/sol-file.js"></script>
+    <script src="scripts/sol-binary.js"></script>
+    <script src="scripts/sol-crypto.js"></script>
+    <script src="scripts/sol-json.js"></script>
+    <script src="scripts/sol-ui.js"></script>
+    <script src="scripts/sol-ng-decorators.js"></script>
+    <script src="vendor/jszip/3.1.3/jszip.min.js"></script>
+
+    <!-- Application -->
+    <script src="app/shared/tub-objects.js"></script>
+    <script src="app/app.js"></script>
+    <script src="app/services/TubMainData.js"></script>
+    <script src="app/controllers/TubCtrl.js"></script>
+    <script src="app/controllers/TubCpakCtrl.js"></script>
+    <script src="app/controllers/TubCpakSummaryCtrl.js"></script>
+    <script src="app/controllers/TubCpakCardsCtrl.js"></script>
+    <script src="app/controllers/TubImagesCtrl.js"></script>
+    <script src="app/controllers/TubXpakCtrl.js"></script>
+    <script src="app/controllers/TubXpakSummaryCtrl.js"></script>
+    <script src="app/controllers/TubXpakItemsCtrl.js"></script>
+    <script src="app/controllers/TubApakCtrl.js"></script>
+    <script src="app/controllers/TubDialogPreviewCardCtrl.js"></script>
+    <script src="app/controllers/TubDialogPreviewImageCtrl.js"></script>
+    <script src="app/controllers/TubDialogPreviewCardValueSplitCtrl.js"></script>
+    <script src="app/controllers/TubDialogCardHitboxEditCtrl.js"></script>
+</head>
+
+<body id="root" ng-app="tooledUpBuilder">
+    <div id="toast-container" ng-controller="TubCtrl as tubCtrl" ng-cloak layout="column">
+        <!-- Hidden Elements -->
+        <form id="file-uploads" class="hidden">
+            <input type="file" id="cpak-file-input" class="hidden" multiple="single" />
+            <input type="file" id="xpak-file-input" class="hidden" multiple="single" />
+            <input type="file" id="apak-file-input" class="hidden" multiple="single" />
+            <input type="file" id="cpak-image-select" class="hidden" multiple="multiple" />
+            <input type="file" id="xpak-image-select" class="hidden" multiple="multiple" />
+            <input type="file" id="apak-item-select" class="hidden" multiple="multiple" />
+        </form>
+
+        <!-- Main Appbar -->
+        <md-toolbar class="md-primary md-hue-2">
+            <div class="md-toolbar-tools">
+                <md-button class="md-icon-button" ng-click="tubCtrl.onToggleDrawer('left')">
+                    <md-icon class="material-icons step">menu</md-icon>
+                </md-button>
+                <h2><span>Tooled Up - Pack Builder</span></h2>
+                <span flex></span>
+                <!--<md-menu md-position-mode="target-right target" >
+                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                        <md-icon class="material-icons step">more_vert</md-icon>
+                    </md-button>
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button ng-click="">Reset</md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>-->
+            </div>
+        </md-toolbar>
+
+        <!-- Main Left drawer -->
+        <md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left">
+            <div class="drawer-banner">
+                <img src="./images/art_combo.svg">
+                <div>
+                    <h1 class="md-headline">Tooled Up</h1>
+                    <h6 class="md-subhead">Pack Builder</h6>
+                </div>
+            </div>
+            <md-list flex>
+                <md-list-item ng-repeat="page in tubCtrl.pages track by $index" ng-click="tubCtrl.onLoadPage($index)" style="position: relative"
+                md-colors="(tubCtrl.selections.page == $index ? {'background-color': 'default-primary-700-0.75', 'color': 'grey-A100'} : {})">
+                    <md-icon class="material-icons" md-colors="(tubCtrl.selections.page == $index ? {'color': 'grey-A100'} : {})">{{page.icon}}</md-icon>
+                    <div class="md-list-item-text" flex>
+                        <h3></h3>
+                        <p>{{page.title}}</p>
+                    </div>
+                </md-list-item>
+                <md-divider></md-divider>
+                <!--<md-subheader class="md-no-sticky">Page Shortcuts</md-subheader>
+                <md-list-item ng-repeat="shortcut in activePageShortcuts track by $index" ng-click="onLoadPageShortcut($index)">
+                    <md-icon class="material-icons">home</md-icon>
+                    <div class="md-list-item-text" flex>
+                        <h3></h3>
+                        <p>Card Packs</p>
+                    </div>
+                </md-list-item>-->
+                <md-divider></md-divider>
+                <md-list-item ng-click="tubCtrl.onShowAbout(event)" style="position: relative">
+                    <md-icon class="material-icons" md-colors="(tubCtrl.selections.page == $index ? {'color': 'grey-A100'} : {})">info</md-icon>
+                    <div class="md-list-item-text" flex>
+                        <h3></h3>
+                        <p>About</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+            <!--<md-content layout-padding>
+                <a ng-click="tubCtrl.onToggleDrawer('left')" href="#images">Shortcut</a>
+            </md-content>-->
+        </md-sidenav>
+
+        <!-- Main content window-->
+        <md-tabs class="md-primary md-hue-2" md-selected="tubCtrl.selections.page" flex>
+            <md-tab label="Card Packs">
+                <md-content class="root" ng-controller="TubCpakCtrl as tubCpakCtrl">
+
+                    <!-- Main Actions -->
+                    <a name="cpak-main"></a>
+                    <md-card class="card-wide">
+                        <div id="cpak-card-banner" class="card-banner" sol-backgroud-src="{{tubCpakCtrl.getBannerData()}}">
+                            <md-progress-circular class="md-primary md-hue-3" md-diameter="60"
+                                ng-hide="!tubCpakCtrl.loadingActivated" ng-disable="!tubCpakCtrl.loadingActivated"></md-progress-circular>
+                            <md-card-title>
+                                <md-card-title-text>
+                                    <span class="md-headline"><h3>{{ tubCpakCtrl.getModelData().title || 'No Cards Selected' }}</h3></span>
+                                </md-card-title-text>
+                            </md-card-title>
+                        </div>
+                        <!--<md-card-content>
+                            <p>
+                            1. Load
+                            2. Edit
+                            3. Save
+                            4. Profit
+                            </p>
+                        </md-card-content>-->
+                        <md-divider></md-divider>
+                        <div>
+                            <md-button class="md-primary md-hue-2" ng-click="onClick('cpak-file-input')">
+                                Load Cards&nbsp;<md-icon class="material-icons step">file_upload</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="onSubmit()">
+                                Save Cards&nbsp;<md-icon class="material-icons step">save</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="tubCpakCtrl.onSendToAIO()">
+                                Add to All-In-One&nbsp;<md-icon class="material-icons step">forward</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="onLoadLink('http://tooledup.solaristudios.com/packs');">
+                                Visit Library&nbsp;<md-icon class="material-icons step">cloud_circle</md-icon>
+                            </md-button>
+                        </div>
+                    </md-card>
+
+                    <!-- Pack Summary-->
+                    <a name="cpak-summary"></a>
+                    <div class="whitespace"></div>
+                    <div ng-controller="TubCpakSummaryCtrl as cpakSummaryCtrl">
+                        <md-toolbar class="card-wide md-primary md-hue-2">
+                            <div class="md-toolbar-tools">
+                                <h2><span>Summary&nbsp;&nbsp;</span></h2>
+                                <md-switch class="md-primary" sol-slideable-toggle="card-cpak-summary" ng-model="tubCpakCtrl.activeCards.summary" aria-label="Show Summary Card"></md-switch>
+                                <span flex></span>
+                                <md-menu md-position-mode="target-right target" >
+                                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                    </md-button>
+                                    <md-menu-content>
+                                        <md-menu-item>
+                                            <md-button ng-click="cpakSummaryCtrl.onPackReset()">Reset Summary</md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </md-toolbar>
+                        <md-card id="card-cpak-summary" class="card-wide sol-slideable" expanded="true">
+                            <div class="whitespace"></div>
+
+                            <form name="formpack" ng-submit="onSubmit(formpack)">
+                                <div sf-schema="cpakSummaryCtrl.schemaDataPack" sf-form="cpakSummaryCtrl.formDataPack" sf-model="tubCpakCtrl.getModelData()"></div>
+                            </form>
+                        </md-card>
+                    </div>
+
+                    <!-- Card Details-->
+                    <a name="cpak-cards"></a>
+                    <div class="whitespace"></div>
+                    <div ng-controller="TubCpakCardsCtrl as cpakCardCtrl">
+                        <md-toolbar class="card-wide md-primary md-hue-2">
+                            <div class="md-toolbar-tools">
+                                <h2><span>Cards &nbsp;&nbsp;</span></h2>
+                                <md-switch class="md-primary" sol-slideable-toggle="card-cpak-cards" ng-model="tubCpakCtrl.activeCards.cards" aria-label="Show Cards"></md-switch>
+                                <span flex></span>
+                                <md-button class="md-icon-button" ng-click="cpakCardCtrl.onCardAdd()">
+                                    <md-icon class="material-icons step">add</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Add Card</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-click="cpakCardCtrl.onCardDuplicate()" ng-show="tubCpakCtrl.getModelData().cards.length">
+                                    <md-icon class="material-icons step">content_copy</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Duplicate Card</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-click="cpakCardCtrl.onCardDelete()" ng-show="tubCpakCtrl.getModelData().cards.length">
+                                    <md-icon class="material-icons step">delete</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Delete Card</md-tooltip>
+                                </md-button>
+                                <md-menu md-position-mode="target-right target" >
+                                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                    </md-button>
+                                    <md-menu-content>
+                                        <md-menu-item>
+                                            <md-button ng-click="cpakCardCtrl.onCardValueUpdate()">Sync Expansion</md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="cpakCardCtrl.onCardSort()">Sort Cards</md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="cpakCardCtrl.onCardReset()">Reset Cards</md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </md-toolbar>
+                        <md-card id="card-cpak-cards" class="card-wide sol-slideable" expanded="true">
+                            <div id="cpak-card-drag-primary">
+                                <div layout="row" ng-show="tubCpakCtrl.getModelData().cards.length">
+                                    <div class="list-group tabs-left" flex>
+                                        <button class="list-group-item" ng-repeat="card in tubCpakCtrl.getModelData().cards track by $index" md-colors="(cpakCardCtrl.selection == $index ? {'background-color': 'default-primary-700', 'color': 'grey-A100'} : {})" ng-click="cpakCardCtrl.onCardSelect($index)" ng-bind-html="cpakCardCtrl.getCardName($index)"></button>
+                                    </div>
+
+                                    <div flex="80">
+                                        <div class="whitespace" ng-show="tubCpakCtrl.getModelData().cards.length"></div>
+                                        <form name="formcards" class="padding-small" ng-submit="onSubmit(formcards)">
+                                            <div sf-schema="cpakCardCtrl.schemaDataModel" sf-form="cpakCardCtrl.formDataModel" sf-model="cpakCardCtrl.cardDataCurrent"></div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="whitespace" ng-show="tubCpakCtrl.getModelData().cards.length"></div>
+
+                                <div layout="row" style="width: 100%" ng-show="!tubCpakCtrl.getModelData().cards.length">
+                                    <div flex></div>
+                                    <div>
+                                        <h4 id="cpak-card-drag-secondary" class="drag-region md-title">Drag &amp; drop packs or click <md-icon class="material-icons step">add</md-icon> to add</h4>
+                                    </div>
+                                    <div flex></div>
+                                </div>
+                            </div>
+                        </md-card>
+                    </div>
+
+                    <!-- Image Details-->
+                    <a name="cpak-images"></a>
+                    <div class="whitespace"></div>
+                    <div ng-controller="TubCpakImagesCtrl as cpakImageCtrl">
+                        <md-toolbar class="card-wide md-primary md-hue-2">
+                            <div class="md-toolbar-tools">
+                                <h2><span>Images&nbsp;&nbsp;</span></h2>
+                                <md-switch class="md-primary" sol-slideable-toggle="card-cpak-images" ng-model="tubCpakCtrl.activeCards.images" aria-label="Show Image Card"></md-switch>
+                                <span flex></span>
+                                <md-button class="md-icon-button" ng-click="onClick('cpak-image-select')">
+                                    <md-icon class="material-icons step">file_upload</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Import Images</md-tooltip>
+                                </md-button>
+                                <md-menu md-position-mode="target-right target" >
+                                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                    </md-button>
+                                    <md-menu-content>
+                                        <md-menu-item>
+                                            <md-button ng-click="cpakImageCtrl.onImageReset()">Reset</md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </md-toolbar>
+                        <md-card id="card-cpak-images" class="card-wide sol-slideable" style="position: relative" expanded="true">
+                            <div id="cpak-image-drag-primary">
+                                <md-tabs class="md-primary md-hue-2" md-selected="cpakImageCtrl.page" ng-show="cpakImageCtrl.imageCache.length > cpakImageCtrl.imagesPerPage" flex>
+                                    <md-tab ng-repeat="i in range(cpakImageCtrl.getImagePageCount()) track by $index">
+                                        <md-label>{{(cpakImageCtrl.getImagePageStart($index) + 1) + " - " + (cpakImageCtrl.getImagePageEnd($index))}}</md-label>
+                                    </md-tab>
+                                </md-tabs>
+
+                                <div layout="row" layout-wrap>
+                                    <div class="autogrid-item item" ng-repeat="image in cpakImageCtrl.imageCache | limitTo:cpakImageCtrl.imagesPerPage:cpakImageCtrl.getImagePageStart() track by $index" flex="20">
+                                        <div style="position: relative;margin: 5px;">
+                                            <img style="min-height: 62px" ng-src="data:image/png;base64,{{cpakImageCtrl.getCachedImage($index).data}}" ng-click="cpakImageCtrl.onImagePreview($event, $index)"/>
+
+                                            <md-toolbar style="position: absolute;bottom: 0px;left: 0px;height: 48px;background: rgba(0, 0, 0, 0.5);">
+                                                <div class="md-toolbar-tools">
+                                                    <h6 class="md-body-2" style="width: 80%;word-wrap: break-word">{{image.path}}</h6>
+                                                    <span flex></span>
+                                                    <md-menu md-position-mode="target-right target" >
+                                                        <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                                            <i md-menu-origin class="material-icons">more_vert</i>
+                                                        </md-button>
+                                                        <md-menu-content>
+                                                            <md-menu-item>
+                                                                <md-button ng-click="cpakImageCtrl.onImageRename($event, $index)">Rename</md-button>
+                                                            </md-menu-item>
+                                                            <md-menu-item>
+                                                                <md-button ng-click="cpakImageCtrl.onImageDelete($event, $index)">Delete</md-button>
+                                                            </md-menu-item>
+                                                        </md-menu-content>
+                                                    </md-menu>
+                                                </div>
+                                            </md-toolbar>
+                                        </div>
+                                    </div>
+
+                                    <div layout="row" style="width: 100%" ng-show="!cpakImageCtrl.getImagePageCount()">
+                                        <div flex></div>
+                                        <div>
+                                            <h4 id="cpak-image-drag-secondary" class="drag-region md-title">Drag &amp drop images or click <md-icon class="material-icons step">file_upload</md-icon> to import</h4>
+                                        </div>
+                                        <div flex></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overlay" style="background-color: rgba(0, 0, 0, 0.5);" ng-hide="!cpakImageCtrl.processingNew">
+                                <md-progress-circular class="md-primary md-hue-3" md-diameter="60" ng-hide="!cpakImageCtrl.processingNew" ng-disable="!cpakImageCtrl.processingNew"></md-progress-circular>
+                            </div>
+                        </md-card>
+                    </div>
+
+                    <div class="whitespace"></div>
+                </md-content>
+            </md-tab>
+            <md-tab label="Expansions (Beta)">
+                <md-content class="root" ng-controller="TubXpakCtrl as tubXpakCtrl">
+                    <!-- Main Actions -->
+                    <a name="xpak-main"></a>
+                    <md-card class="card-wide">
+                        <div id="xpak-card-banner" class="card-banner" sol-backgroud-src="{{tubXpakCtrl.getBannerData()}}">
+                            <md-progress-circular class="md-primary md-hue-3" md-diameter="60"
+                                ng-hide="!tubXpakCtrl.loadingActivated" ng-disable="!tubXpakCtrl.loadingActivated"></md-progress-circular>
+                            <md-card-title>
+                                <md-card-title-text>
+                                    <span class="md-headline"><h3>{{ tubXpakCtrl.getModelData().title || 'No Expansion Selected' }}</h3></span>
+                                </md-card-title-text>
+                            </md-card-title>
+                        </div>
+                        <!-- <md-card-content>
+                            <p>
+                            1. Load
+                            2. Edit
+                            3. Save
+                            4. Profit
+                            </p>
+                        </md-card-content>-->
+                        <md-divider></md-divider>
+                        <div>
+                            <md-button class="md-primary md-hue-2" ng-click="onClick('xpak-file-input')">
+                                Load Expansion&nbsp;<md-icon class="material-icons step">file_upload</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="onSubmit()">
+                                Save Expansion&nbsp;<md-icon class="material-icons step">save</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="tubXpakCtrl.onSendToAIO()">
+                                Add to All-In-One&nbsp;<md-icon class="material-icons step">forward</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="onLoadLink('http://tooledup.solaristudios.com/packs');">
+                                Visit Library&nbsp;<md-icon class="material-icons step">cloud_circle</md-icon>
+                            </md-button>
+                        </div>
+                    </md-card>
+
+                    <!-- Pack Summary-->
+                    <a name="xpak-summary"></a>
+                    <div class="whitespace"></div>
+                    <div ng-controller="TubXpakSummaryCtrl as xpakSummaryCtrl">
+                        <md-toolbar class="card-wide md-primary md-hue-2">
+                            <div class="md-toolbar-tools">
+                                <h2><span>Summary&nbsp;&nbsp;</span></h2>
+                                <md-switch class="md-primary" sol-slideable-toggle="card-xpak-summary" ng-model="tubXpakCtrl.activeCards.summary" aria-label="Show Summary Card"></md-switch>
+                                <span flex></span>
+                                <md-menu md-position-mode="target-right target" >
+                                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                    </md-button>
+                                    <md-menu-content>
+                                        <md-menu-item>
+                                            <md-button ng-click="xpakSummaryCtrl.onPackReset()">Reset Summary</md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </md-toolbar>
+                        <md-card id="card-xpak-summary" class="card-wide sol-slideable" expanded="true">
+                            <div class="whitespace"></div>
+
+                            <form name="formpack" ng-submit="onSubmit(formpack)">
+                                <div sf-schema="xpakSummaryCtrl.schemaDataPack" sf-form="xpakSummaryCtrl.formDataPack" sf-model="tubXpakCtrl.getModelData()"></div>
+                            </form>
+                        </md-card>
+                    </div>
+
+                    <!-- Pack Items-->
+                    <a name="xpak-items"></a>
+                    <div class="whitespace"></div>
+                    <div ng-controller="TubXpakItemsCtrl as xpakItemsCtrl">
+                        <md-toolbar class="card-wide md-primary md-hue-2">
+                            <div class="md-toolbar-tools">
+                                <h2><span>Enhancement Items&nbsp;&nbsp;</span></h2>
+                                <md-switch class="md-primary" sol-slideable-toggle="card-xpak-items" ng-model="tubXpakCtrl.activeCards.items" aria-label="Show Items Card"></md-switch>
+                                <span flex></span>
+                                <md-button class="md-icon-button" ng-click="xpakItemsCtrl.onItemReset()">
+                                    <md-icon class="material-icons step">refresh</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Reset Current Tab</md-tooltip>
+                                </md-button>
+                                <md-menu md-position-mode="target-right target">
+                                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                    </md-button>
+                                    <md-menu-content>
+                                        <md-menu-item>
+                                            <md-button ng-click="xpakItemsCtrl.onCardValueUpdate()">Sync Card Pack</md-button>
+                                        </md-menu-item>
+                                        <md-menu-item>
+                                            <md-button ng-click="xpakItemsCtrl.onItemsReset()">Reset All Items</md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </md-toolbar>
+                        <md-card id="card-xpak-items" class="card-wide sol-slideable" expanded="true">
+                            <md-tabs class="md-primary md-hue-2" md-selected="xpakItemsCtrl.selections.page" md-stretch-tabs="always" md-dynamic-height flex>
+                                <md-tab label="Card Values">
+                                    <md-content class="padding-small">
+                                        <div class="whitespace"></div>
+                                        <div layout="row" style="width: 100%" ng-show="tubXpakCtrl.getModelData().cardValues.length === 0">
+                                            <div flex></div>
+                                            <div>
+                                                <h4 class="md-title">
+                                                    No card values found&nbsp;&nbsp;
+                                                    <md-button class="md-raised md-primary" ng-click="xpakItemsCtrl.onAddItem()">Add New Value</md-button>
+                                                </h4>
+                                            </div>
+                                            <div flex></div>
+                                        </div>
+                                        <div class="whitespace" ng-show="tubXpakCtrl.getModelData().cardValues.length === 0"></div>
+
+                                        <form name="formcardvalues" ng-submit="onSubmit(formcardvalues)" ng-show="tubXpakCtrl.getModelData().cardValues.length !== 0">
+                                            <div sf-schema="xpakItemsCtrl.schemaDataPack" sf-form="xpakItemsCtrl.formDataPack.cardValues" sf-model="tubXpakCtrl.getModelData()"></div>
+                                        </form>
+                                    </md-content>
+                                </md-tab>
+                                <md-tab label="Titles/Subtitles">
+                                    <md-content>
+                                        <div class="whitespace"></div>
+                                        <form name="formtitles" ng-submit="onSubmit(formtitles)">
+                                            <div sf-schema="xpakItemsCtrl.schemaDataPack" sf-form="xpakItemsCtrl.formDataPack.titles" sf-model="tubXpakCtrl.getModelData()"></div>
+                                        </form>
+                                    </md-content>
+                                </md-tab>
+                                <md-tab label="Clocks" ng-disabled="true">
+                                    <md-content>
+                                    </md-content>
+                                </md-tab>
+                                <md-tab label="Score Types" ng-disabled="true">
+                                    <md-content>
+                                    </md-content>
+                                </md-tab>
+                                <md-tab label="Shortcuts" ng-disabled="true">
+                                    <md-content>
+                                    </md-content>
+                                </md-tab>
+                            </md-tabs>
+                        </md-card>
+                    </div>
+
+                    <!-- Image Details-->
+                    <a name="xpak-images"></a>
+                    <div class="whitespace"></div>
+                    <div ng-controller="TubXpakImagesCtrl as xpakImageCtrl">
+                        <md-toolbar class="card-wide md-primary md-hue-2">
+                            <div class="md-toolbar-tools">
+                                <h2><span>Images&nbsp;&nbsp;</span></h2>
+                                <md-switch class="md-primary" sol-slideable-toggle="card-xpak-images" ng-model="tubXpakCtrl.activeCards.images" aria-label="Show Image Card"></md-switch>
+                                <span flex></span>
+                                <md-button class="md-icon-button" ng-click="onClick('xpak-image-select')">
+                                    <md-icon class="material-icons step">file_upload</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Import Images</md-tooltip>
+                                </md-button>
+                                <md-menu md-position-mode="target-right target" >
+                                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                    </md-button>
+                                    <md-menu-content>
+                                        <md-menu-item>
+                                            <md-button ng-click="xpakImageCtrl.onImageReset()">Reset</md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </md-toolbar>
+                        <md-card id="card-xpak-images" class="card-wide sol-slideable" style="position: relative" expanded="true">
+                            <div id="xpak-image-drag-primary">
+                                <md-tabs class="md-primary md-hue-2" md-selected="page" ng-show="xpakImageCtrl.imageCache.length > xpakImageCtrl.imagesPerPage" flex>
+                                    <md-tab ng-repeat="i in range(xpakImageCtrl.getImagePageCount()) track by $index">
+                                        <md-label>{{(xpakImageCtrl.getImagePageStart($index) + 1) + " - " + (xpakImageCtrl.getImagePageEnd($index))}}</md-label>
+                                    </md-tab>
+                                </md-tabs>
+
+                                <div layout="row" layout-wrap>
+                                    <div class="autogrid-item item" ng-repeat="image in xpakImageCtrl.imageCache | limitTo:xpakImageCtrl.imagesPerPage:xpakImageCtrl.getImagePageStart() track by $index" flex="20">
+                                        <div style="position: relative;margin: 5px;">
+                                            <img style="min-height: 62px" ng-src="data:image/png;base64,{{xpakImageCtrl.getCachedImage($index).data}}" ng-click="xpakImageCtrl.onImagePreview($event, $index)"/>
+
+                                            <md-toolbar style="position: absolute;bottom: 0px;left: 0px;height: 48px;background: rgba(0, 0, 0, 0.5);">
+                                                <div class="md-toolbar-tools">
+                                                    <h6 class="md-body-2" style="width: 80%;word-wrap: break-word">{{image.path}}</h6>
+                                                    <span flex></span>
+                                                    <md-menu md-position-mode="target-right target" >
+                                                        <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                                            <i md-menu-origin class="material-icons">more_vert</i>
+                                                        </md-button>
+                                                        <md-menu-content>
+                                                            <md-menu-item>
+                                                                <md-button ng-click="xpakImageCtrl.onImageRename($event, $index)">Rename</md-button>
+                                                            </md-menu-item>
+                                                            <md-menu-item>
+                                                                <md-button ng-click="xpakImageCtrl.onImageDelete($event, $index)">Delete</md-button>
+                                                            </md-menu-item>
+                                                        </md-menu-content>
+                                                    </md-menu>
+                                                </div>
+                                            </md-toolbar>
+                                        </div>
+                                    </div>
+
+                                    <div layout="row" style="width: 100%" ng-show="!xpakImageCtrl.getImagePageCount()">
+                                        <div flex></div>
+                                        <div>
+                                            <h4 id="xpak-image-drag-secondary" class="drag-region md-title">Drag &amp; drop images or click <md-icon class="material-icons step">file_upload</md-icon> to import</h4>
+                                        </div>
+                                        <div flex></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overlay" style="background-color: rgba(0, 0, 0, 0.5);" ng-hide="!xpakImageCtrl.processingNew">
+                                <md-progress-circular class="md-primary md-hue-3" md-diameter="60" ng-hide="!xpakImageCtrl.processingNew" ng-disable="!xpakImageCtrl.processingNew"></md-progress-circular>
+                            </div>
+                        </md-card>
+                    </div>
+
+                    <div class="whitespace"></div>
+                </md-content>
+            </md-tab>
+            <md-tab label="All-In-One">
+                <md-content class="root" ng-controller="TubApakCtrl as tubApakCtrl">
+                    <!-- Main Actions -->
+                    <a name="apak-main"></a>
+                    <md-card class="card-wide">
+                        <div id="apak-card-banner" class="card-banner" sol-backgroud-src="{{tubApakCtrl.getBannerData()}}">
+                            <md-progress-circular class="md-primary md-hue-3" md-diameter="60"
+                                ng-hide="!tubApakCtrl.processingNew" ng-disable="!tubApakCtrl.processingNew"></md-progress-circular>
+                            <md-card-title>
+                                <md-card-title-text>
+                                    <span class="md-headline"><h3>{{tubApakCtrl.getBannerTitle()}}</h3></span>
+                                </md-card-title-text>
+                            </md-card-title>
+                        </div>
+                        <!-- <md-card-content>
+                            <p>
+                            1. Load
+                            2. Edit
+                            3. Save
+                            4. Profit
+                            </p>
+                        </md-card-content>-->
+                        <md-divider></md-divider>
+                        <div>
+                            <md-button class="md-primary md-hue-2" ng-click="onClick('apak-file-input')">
+                                Load Pack&nbsp;<md-icon class="material-icons step">file_upload</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="onSubmit()">
+                                Save AIO Pack&nbsp;<md-icon class="material-icons step">save</md-icon>
+                            </md-button>
+                            <md-button class="md-primary md-hue-2" ng-click="onLoadLink('http://tooledup.solaristudios.com/packs');">
+                                Visit Library&nbsp;<md-icon class="material-icons step">cloud_circle</md-icon>
+                            </md-button>
+                        </div>
+                    </md-card>
+
+                    <!-- Pack List-->
+                    <a name="apak-items"></a>
+                    <div class="whitespace"></div>
+                    <div>
+                        <md-toolbar class="card-wide md-primary md-hue-2">
+                            <div class="md-toolbar-tools">
+                                <h2><span>Packs&nbsp;&nbsp;</span></h2>
+                                <md-switch class="md-primary" sol-slideable-toggle="card-apak-items" ng-model="tubApakCtrl.activeCards.items" aria-label="Show Pack Items"></md-switch>
+                                <span flex></span>
+                                <md-button class="md-icon-button" ng-click="onClick('apak-item-select')">
+                                    <md-icon class="material-icons step">file_upload</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Import Pack</md-tooltip>
+                                </md-button>
+                                <md-button class="md-icon-button" ng-click="tubApakCtrl.onPackReset()">
+                                    <md-icon class="material-icons step">refresh</md-icon>
+                                    <md-tooltip md-direction="below" md-delay="750">Reset Packs</md-tooltip>
+                                </md-button>
+                                <md-menu md-position-mode="target-right target">
+                                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                    </md-button>
+                                    <md-menu-content>
+                                        <md-menu-item>
+                                            <md-button ng-click="tubApakCtrl.onResetAll()">Reset All Packs</md-button>
+                                        </md-menu-item>
+                                    </md-menu-content>
+                                </md-menu>
+                            </div>
+                        </md-toolbar>
+                        <md-card id="card-apak-items" class="card-wide sol-slideable" expanded="true">
+                            <md-tabs class="md-primary md-hue-2" md-selected="tubApakCtrl.selections.page" md-stretch-tabs="always" md-dynamic-height flex>
+                                <md-tab label="{{tab.title}}" ng-repeat="tab in tubApakCtrl.tabs track by tab.page" ng-disabled="tab.disabled">
+                                    <md-content>
+                                        <div id="apak-{{tab.type}}-drag-primary">
+                                            <div>
+                                                <div class="list-group-item" layout="row" ng-repeat="pack in tubApakCtrl.getPacks(tab.type) track by $index" ng-show="tubApakCtrl.getPacks(tab.type).length">
+                                                    <div style="position:relative;" flex>
+                                                        <span class="md-subhead" style="position:absolute;top:25%;">{{getFileName(pack.path)}}</span>
+                                                    </div>
+                                                    <span flex></span>
+                                                    <md-button class="md-icon-button" ng-click="tubApakCtrl.onPackOpen(pack.path)">
+                                                        <md-icon class="material-icons step">open_in_browser</md-icon>
+                                                        <md-tooltip md-direction="below" md-delay="750">Open In Editor</md-tooltip>
+                                                    </md-button>
+                                                    <md-button class="md-icon-button" ng-click="tubApakCtrl.onPackDelete(pack.path)">
+                                                        <md-icon class="material-icons step">delete</md-icon>
+                                                        <md-tooltip md-direction="below" md-delay="750">Delete Pack</md-tooltip>
+                                                    </md-button>
+                                                    <md-menu md-position-mode="target-right target">
+                                                        <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                                                            <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                                                        </md-button>
+                                                        <md-menu-content>
+                                                            <md-menu-item>
+                                                                <md-button ng-click="tubApakCtrl.onPackDownload(pack.path)">Download</md-button>
+                                                            </md-menu-item>
+                                                            <md-menu-item>
+                                                                <md-button ng-click="tubApakCtrl.onPackRename(pack.path)">Rename</md-button>
+                                                            </md-menu-item>
+                                                        </md-menu-content>
+                                                    </md-menu>
+                                                </div>
+                                            </div>
+                                            <div layout="row" style="width: 100%" ng-show="!tubApakCtrl.getPacks('{{tab.type}}').length">
+                                                <div flex></div>
+                                                <div>
+                                                    <h4 id="apak-{{tab.type}}-drag-secondary" class="drag-region md-title" sol-onready="tubApakCtrl.initDragAndDrop('{{tab.type}}')">
+                                                        Drag &amp; drop {{tab.subtitle}} or click <md-icon class="material-icons step">file_upload</md-icon> to import
+                                                    </h4>
+                                                </div>
+                                                <div flex></div>
+                                            </div>
+                                        </div>
+                                    </md-content>
+                                </md-tab>
+                            </md-tabs>
+                        </md-card>
+                    </div>
+                </md-content>
+            </md-tab>
+        </md-tabs>
+    </div>
+</body>
+</html>

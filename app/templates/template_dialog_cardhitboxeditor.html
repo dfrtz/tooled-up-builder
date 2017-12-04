@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<md-dialog aria-label="Edit Hitbox" style="overflow: hidden">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <div layout="column">
+                    <span class="md-title">Editing {{editorCtrl.card.title}}</span>
+                    <span class="md-caption">{{(editorCtrl.activeVersion.title || 'Version ' + (editorCtrl.versionIndex + 1)) + ' : ' + (editorCtrl.activeHitbox.title || 'Hitbox ' + (editorCtrl.hitboxIndex + 1))}}</span>
+                </div>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="editorCtrl.onDeleteCoord(editorCtrl.selectedCoord.id)" ng-disabled="!editorCtrl.selectedCoord">
+                    <md-icon class="material-icons step" aria-label="Lock">delete</md-icon>
+                    <md-tooltip md-direction="below" md-delay="750">Delete Coordinate</md-tooltip>
+                </md-button>
+                <md-menu md-position-mode="target-right target" >
+                    <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                        <md-icon md-menu-origin class="material-icons step">more_vert</md-icon>
+                    </md-button>
+                    <md-menu-content>
+                        <md-menu-item>
+                            <md-button ng-click="editorCtrl.onDeleteAll()">Delete All</md-button>
+                        </md-menu-item>
+                    </md-menu-content>
+                </md-menu>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content style="overflow: hidden">
+            <div class="md-dialog-content">
+                <div layout="row">
+                    <sol-flipper id="flipper" flip-width="66%" flip-height="66%" ratio="{{editorCtrl.getImageRatio()}}" sol-onready="editorCtrl.initFlipper($index)">
+                        <!-- TODO: Remove 2 sides limit -->
+                        <sol-flip-panel ng-repeat="image in editorCtrl.card.content | limitTo:2 track by $index">
+                            <img style="width: 100%; height: 100%; object-fit: contain; margin: auto; position: absolute; top: 0px; left: 0px;" data-ng-src="{{editorCtrl.getImage(image)}}"/>
+                            <canvas id="{{'canvas' + $index}}" style="border: 1px dashed #aaa; position: absolute; top: 0px; left: 0px;" sol-onready="editorCtrl.initCanvas($index)">
+                            This text is displayed if your browser does not support HTML5 Canvas.
+                            </canvas>
+                        </sol-flip-panel>
+                    </sol-flipper>
+                    <div style="padding: 0.5em; max-width: 15em; margin-left: 1em">
+                        <h3 class="md-title">Details</h3>
+                        <md-input-container class="md-block">
+                            <label>Point</label>
+                            <input required type="number" step="1" ng-model="editorCtrl.idGetterSetter" ng-model-options="{ getterSetter: true }" min="1" max="{{editorCtrl.coords.length}}" md-no-asterisk/>
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label>Color</label>
+                            <input required ng-model="editorCtrl.colorGetterSetter" ng-model-options="{ getterSetter: true }" ng-pattern="/^#*[a-fA-F0-9]{8}$/" md-no-asterisk/>
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label>Size</label>
+                            <input required type="number" step="1" ng-model="editorCtrl.sizeGetterSetter" ng-model-options="{ getterSetter: true }" min="1" max="100" md-no-asterisk/>
+                        </md-input-container>
+                        <h4 class="md-title">Position</h4>
+                        <div layout="row">
+                            <md-input-container class="md-block">
+                                <label>X</label>
+                                <input required type="number" step="1" ng-model="editorCtrl.xGetterSetter" ng-model-options="{ getterSetter: true }" min="0" max="{{editorCtrl.getGridSize().x}}" md-no-asterisk/>
+                            </md-input-container>
+                            <md-input-container class="md-block">
+                                <label>Y</label>
+                                <input required type="number" step="1" ng-model="editorCtrl.yGetterSetter" ng-model-options="{ getterSetter: true }" min="0" max="{{editorCtrl.getGridSize().y}}" md-no-asterisk/>
+                            </md-input-container>
+                            <md-input-container class="md-block">
+                                <label>Side</label>
+                                <input required type="number" step="1" ng-model="editorCtrl.zGetterSetter" ng-model-options="{ getterSetter: true }" min="1" max="2" md-no-asterisk/>
+                            </md-input-container>
+                        </div>
+                        <div>
+                            <table style="margin: auto;">
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <md-button class="md-icon-button" ng-click="editorCtrl.onMoveCoord('u')" aria-label="Coordinate Up">
+                                            <md-icon>keyboard_arrow_up</md-icon>
+                                        </md-button>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <md-button class="md-icon-button" ng-click="editorCtrl.onMoveCoord('l')" aria-label="Coordinate Left">
+                                            <md-icon>keyboard_arrow_left</md-icon>
+                                        </md-button>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <md-button class="md-icon-button" ng-click="editorCtrl.onMoveCoord('r')" aria-label="Coordinate Right">
+                                            <md-icon>keyboard_arrow_right</md-icon>
+                                        </md-button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <md-button class="md-icon-button" ng-click="editorCtrl.onMoveCoord('d')" aria-label="Coordinate Down">
+                                            <md-icon>keyboard_arrow_down</md-icon>
+                                        </md-button>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button ng-click="editorCtrl.onLockCanvas()" ng-show="!editorCtrl.canvasLock">
+                Lock Canvas
+            </md-button>
+            <md-button ng-click="editorCtrl.onUnlockCanvas()" ng-show="editorCtrl.canvasLock">
+                Unlock Canvas
+            </md-button>
+            <span flex></span>
+            <md-button ng-click="cancel()">Cancel</md-button>
+            <md-button ng-click="answer('ok')">Save Changes</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
