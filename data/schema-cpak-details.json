@@ -1,0 +1,36 @@
+{
+  "title": "Card Pack",
+  "type": "object",
+  "properties": {
+    "set": {
+      "title": "Game Name",
+      "type": "string"
+    },
+    "title": {
+      "title": "Pack Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "number"
+    },
+    "group": {
+      "title": "Group Tag",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "compatibility": {
+      "title": "Cross-Game Compatibility Tag",
+      "type": "string"
+    }
+  },
+  "required": [
+    "set",
+    "title",
+    "version",
+    "group"
+  ]
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "section",
+    "items": [
+      {
+        "type": "section",
+        "htmlClass": "row padding-small",
+        "items": [
+          {
+            "key": "set",
+            "placeholder": "Example: \"Guild Ball\"",
+            "htmlClass": "col-xs-4"
+          },
+          {
+            "key": "title",
+            "placeholder": "Example: \"Guild Ball Expansion\"",
+            "htmlClass": "col-xs-4"
+          },
+          {
+            "key": "version",
+            "placeholder": "Revision",
+            "htmlClass": "col-xs-4"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "row margin-small",
+        "items": [
+          {
+            "key": "description",
+            "type": "textarea"
+          }
+        ]
+      }
+    ]
+  }
+]

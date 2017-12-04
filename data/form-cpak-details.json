@@ -1,0 +1,53 @@
+[
+  {
+    "type": "section",
+    "items": [
+      {
+        "type": "section",
+        "htmlClass": "row padding-small",
+        "items": [
+          {
+            "key": "set",
+            "placeholder": "Example: \"Guild Ball\"",
+            "htmlClass": "col-xs-4"
+          },
+          {
+            "key": "title",
+            "placeholder": "Example: \"Alchemist's Guild\"",
+            "htmlClass": "col-xs-4"
+          },
+          {
+            "key": "group",
+            "placeholder": "Example: \"Alchemists\"",
+            "htmlClass": "col-xs-4"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "row padding-small",
+        "items": [
+          {
+            "key": "version",
+            "placeholder": "Revision",
+            "htmlClass": "col-xs-3"
+          },
+          {
+            "key": "compatibility",
+            "htmlClass": "col-xs-9"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "row margin-small",
+        "items": [
+          {
+            "key": "description",
+            "type": "textarea"
+          }
+        ]
+      }
+    ]
+  }
+]

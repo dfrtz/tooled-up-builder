@@ -1,0 +1,247 @@
+{
+  "title": "Expansion Pack",
+  "type": "object",
+  "properties": {
+    "set": {
+      "title": "Game Name",
+      "type": "string"
+    },
+    "title": {
+      "title": "Pack Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "number"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "categories": {
+      "title": "Card Categories",
+      "type": "array",
+      "items": {
+        "title": "",
+        "type": "string"
+      }
+    },
+    "cardValues": {
+      "title": "Card Value Types",
+      "type": "array",
+      "items": {
+        "title": "Card Value",
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string",
+            "default": "Text",
+            "enum": [
+              "Text",
+              "Numeric",
+              "Boolean"
+            ]
+          },
+          "default": {
+            "title": "Default",
+            "type": "string",
+            "default": "?"
+          }
+        },
+        "required": [
+          "title",
+          "type"
+        ]
+      }
+    },
+    "titles": {
+      "title": "Titles",
+      "type": "object",
+      "properties": {
+        "cardStacks": {
+          "title": "Match Stacks",
+          "type": "array",
+          "items": {
+            "title": " ",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "subtitles": {
+      "title": "Subtitles",
+      "type": "object",
+      "properties": {
+        "card": {
+          "title": "Card List Subtitle",
+          "type": "string"
+        },
+        "cardShort": {
+          "title": "Card List Subtitle Shorthand",
+          "type": "string"
+        },
+        "cardStack": {
+          "title": "Match Card Stack Subtitle",
+          "type": "string"
+        },
+        "deck": {
+          "title": "Deck Summary Subtitle",
+          "type": "string"
+        }
+      }
+    },
+    "clocks": {
+      "title": "Clocks",
+      "type": "array",
+      "items": {
+        "title": "Clock",
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "seconds": {
+            "title": "Main Time (Seconds)",
+            "type": "integer"
+          },
+          "overtime": {
+            "title": "Overtime Intervals",
+            "type": "array",
+            "items": {
+              "title": " ",
+              "type": "integer"
+            }
+          },
+          "autoOvertime": {
+            "title": "Automatic Overtime",
+            "type": "boolean",
+            "default": false
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "buzzer": {
+            "title": "Buzzer",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scores": {
+      "title": "Score Types",
+      "type": "array",
+      "items": {
+        "title": "Score",
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "subtitle": {
+            "title": "Subtitle",
+            "type": "string"
+          },
+          "min": {
+            "title": "Minimum Value",
+            "type": "integer"
+          },
+          "max": {
+            "title": "Maximum Value",
+            "type": "integer"
+          },
+          "default": {
+            "title": "Starting Value",
+            "type": "integer"
+          },
+          "multiplier": {
+            "title": "Point Multiplier",
+            "type": "integer"
+          },
+          "addToTotal": {
+            "title": "Adds to Total Score",
+            "type": "boolean",
+            "default": true
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "actions": {
+      "title": "Shortcuts",
+      "type": "array",
+      "items": {
+        "title": "Action",
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "Type",
+            "type": "string",
+            "enum": [
+              "Single",
+              "Group"
+            ]
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "link": {
+            "title": "Action Link",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "actions": {
+            "title": "Action Subgroup",
+            "type": "array",
+            "items": {
+              "title": "Action",
+              "type": "object",
+              "properties": {
+                "type": {
+                  "title": "Type",
+                  "type": "string",
+                  "enum": [
+                    "Single",
+                    "Group"
+                  ]
+                },
+                "title": {
+                  "title": "Title",
+                  "type": "string"
+                },
+                "link": {
+                  "title": "Action Link",
+                  "type": "string"
+                },
+                "icon": {
+                  "title": "Icon",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "set",
+    "title",
+    "version",
+    "cardValues"
+  ]
+}

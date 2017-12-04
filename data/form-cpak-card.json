@@ -1,0 +1,153 @@
+[
+  {
+    "type": "section",
+    "htmlClass": "row",
+    "items": [
+      {
+        "key": "idGroup.id",
+        "title": "ID",
+        "htmlClass": "col-xs-2"
+      },
+      {
+        "key": "idGroup.revision",
+        "title": "Revision",
+        "htmlClass": "col-xs-2"
+      },
+      {
+        "key": "title",
+        "htmlClass": "col-xs-4"
+      },
+      {
+        "key": "legacy",
+        "htmlClass": "col-xs-4"
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "htmlClass": "row",
+    "items": [
+      {
+        "key": "subtitle",
+        "htmlClass": "col-xs-6"
+      },
+      {
+        "key": "groups",
+        "htmlClass": "col-xs-6"
+      }
+    ]
+  },
+  {
+    "replaceImageType": null,
+    "replaceImageTemplate": null,
+    "replaceImagePreview": null
+  },
+  {
+    "type": "section",
+    "htmlClass": "row",
+    "items": [
+      {
+        "key": "landscape",
+        "type": "radios",
+        "htmlClass": "col-xs-2",
+        "titleMap": [
+          {
+            "value": false,
+            "name": "Portrait"
+          },
+          {
+            "value": true,
+            "name": "Landscape"
+          }
+        ]
+      },
+      {
+        "key": "content",
+        "type": "array",
+        "htmlClass": "col-xs-10",
+        "startEmpty": true,
+        "add": "Add Image",
+        "style": {
+          "add": "pull-left mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+        }
+      }
+    ]
+  },
+  {
+    "key": "versions",
+    "title": "{{ value.title || 'Version ' + ($index + 1) }}",
+    "type": "tabarray",
+    "tabType": "top",
+    "startEmpty": true,
+    "add": "New Version",
+    "remove": "Delete Version",
+    "style": {
+      "remove": "btn-danger mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-warning"
+    },
+    "items": [
+      {
+        "key": "versions[].title",
+        "placeholder": "Optional: Version Title"
+      },
+      {
+        "type": "section",
+        "replaceCategoryItems": null
+      },
+      {
+        "key": "versions[].hitboxes",
+        "type": "array",
+        "startEmpty": true,
+        "add": "Add Hitbox",
+        "remove": "Delete Hitbox",
+        "style": {
+          "add": "pull-left mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+        },
+        "items": [
+          {
+            "replaceHitboxType": null,
+            "replaceHitboxTemplate": null,
+            "replaceHitboxEdit": null
+          },
+          {
+            "key": "versions[].hitboxes[].title",
+            "placeholder": "Optional: Hitbox Category"
+          },
+          {
+            "type": "section",
+            "htmlClass": "row",
+            "items": [
+              {
+                "type": "help",
+                "helpvalue": "<div class=\"help-header\"><label class=\"margin-small\">Default Coordinate Values</label></div>"
+              },
+              {
+                "key": "versions[].hitboxes[].defaultX",
+                "htmlClass": "col-xs-2"
+              },
+              {
+                "key": "versions[].hitboxes[].defaultY",
+                "htmlClass": "col-xs-2"
+              },
+              {
+                "key": "versions[].hitboxes[].defaultZ",
+                "htmlClass": "col-xs-2"
+              },
+              {
+                "key": "versions[].hitboxes[].defaultSize",
+                "htmlClass": "col-xs-2"
+              },
+              {
+                "key": "versions[].hitboxes[].color",
+                "htmlClass": "col-xs-4"
+              }
+            ]
+          },
+          {
+            "key": "versions[].hitboxes[].values",
+            "type": "textarea"
+          }
+        ]
+      }
+    ]
+  }
+]

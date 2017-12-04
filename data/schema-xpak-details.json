@@ -1,0 +1,35 @@
+{
+  "title": "Expansion Pack",
+  "type": "object",
+  "properties": {
+    "set": {
+      "title": "Game Name",
+      "type": "string"
+    },
+    "title": {
+      "title": "Pack Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "number"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "categories": {
+      "title": "Card Categories",
+      "type": "array",
+      "items": {
+        "title": " ",
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "set",
+    "title",
+    "version"
+  ]
+}

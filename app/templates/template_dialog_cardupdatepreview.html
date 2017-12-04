@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<md-dialog aria-label="Sync Expansion Pack Categories">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Sync Expansion Pack Categories</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon class="material-icons step" aria-label="Close dialog">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="card-wide md-dialog-content">
+                <h1 class="md-headline" style="text-align: center">New Categories Found</h1>
+                <h2 class="md-subhead">
+                    The Expansion Pack categories loaded with the Card Pack no longer match.
+                    Decide how you want removed/renamed categories to be resolved during reprocessing.
+                    If you want to merge the original categories with new categories, or continue with the new categories only.
+                    <br>
+                    <br>
+                    Tip: If renaming and removing values the Sync process should be performed twice. First with renames only, and second with removes only.
+                </h2>
+                <div layout="row">
+                    <div layout="column" flex="33">
+                        <div class="md-title">
+                            Current categories:
+                        </div>
+                    </div>
+                    <div layout="column" flex="33">
+                        <md-checkbox class="md-title" ng-checked="!previewCtrl.merge" ng-click="previewCtrl.merge = !previewCtrl.merge" aria-label="Pre-merge">
+                            Drop renamed/removed (Default)
+                        </md-checkbox>
+                    </div>
+                    <div layout="column" flex="33">
+                        <md-checkbox class="md-title" ng-checked="previewCtrl.merge" ng-click="previewCtrl.merge = !previewCtrl.merge" aria-label="Pre-merge">
+                            Direct transfer
+                        </md-checkbox>
+                    </div>
+                </div>
+                <div layout="row">
+                    <div layout="column" flex="33">
+                        <div class="md-body-2">
+                            Name: {{previewCtrl.getCardName()}}
+                        </div>
+                        <div class="md-caption" ng-repeat="value in previewCtrl.oldValues track by $index">
+                            {{value.title}}: {{previewCtrl.getOriginalCardValue($index)}}
+                        </div>
+                    </div>
+                    <div layout="column" flex="33">
+                        <div class="md-body-2">
+                            (Removed/renamed categories deleted immediately.)
+                        </div>
+                        <div class="md-caption" ng-repeat="value in previewCtrl.xpak.cardValues track by $index">
+                            {{value.title}}: {{previewCtrl.getFinalCardValue($index, 'nomerge')}}
+                        </div>
+                    </div>
+                    <div layout="column" flex="33">
+                        <div class="md-body-2">
+                            (Removed/renamed categories transferred across.)
+                        </div>
+                        <div class="md-caption" ng-repeat="value in previewCtrl.xpak.cardValues track by $index">
+                            {{value.title}}: {{previewCtrl.getFinalCardValue($index, 'merge')}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row">
+            <md-button ng-click="previewCtrl.generateRandomCard()">Randomize Card Preview</md-button>
+            <md-button ng-show="previewCtrl.debugEnabled" ng-click="previewCtrl.debugCards()">Debug Cards</md-button>
+            <span flex></span>
+            <md-button ng-click="cancel()">Cancel</md-button>
+            <md-button ng-click="answer('ok')">Update cards</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

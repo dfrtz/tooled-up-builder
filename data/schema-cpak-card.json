@@ -1,0 +1,130 @@
+{
+  "title": "Card",
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "type": "integer"
+    },
+    "idGroup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000000
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9999
+        }
+      }
+    },
+    "title": {
+      "title": "Name",
+      "type": "string"
+    },
+    "subtitle": {
+      "title": "Custom Subtitle",
+      "type": "string"
+    },
+    "legacy": {
+      "title": "Legacy Title",
+      "type": "string"
+    },
+    "groups": {
+      "title": "Member Groups",
+      "type": "string"
+    },
+    "private": {
+      "title": "Private Side",
+      "type": "integer"
+    },
+    "landscape": {
+      "title": "Orientation",
+      "type": "boolean",
+      "default": false
+    },
+    "content": {
+      "title": "Images",
+      "type": "array",
+      "items": {
+        "title": " ",
+        "type": "string"
+      }
+    },
+    "versions": {
+      "title": "Versions",
+      "type": "array",
+      "items": {
+        "title": "Version",
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Name",
+            "type": "string"
+          },
+          "values": {
+            "title": "Card Values",
+            "type": "string"
+          },
+          "valuesGroup": {
+            "type": "object",
+            "title": "Model Details",
+            "properties": {
+            }
+          },
+          "hitboxes": {
+            "title": "Hitboxes",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "title": "Title",
+                  "type": "string"
+                },
+                "color": {
+                  "title": "Color",
+                  "type": "string",
+                  "pattern": "^#[a-fA-F0-9]"
+                },
+                "defaultX": {
+                  "title": "X",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000
+                },
+                "defaultY": {
+                  "title": "Y",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000
+                },
+                "defaultZ": {
+                  "title": "Z",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10
+                },
+                "defaultSize": {
+                  "title": "Radius",
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 500
+                },
+                "values": {
+                  "title": "Coordinates",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

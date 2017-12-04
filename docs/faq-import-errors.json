@@ -1,0 +1,127 @@
+[
+  {
+    "title": "Phase 1",
+    "data": [
+      {
+        "problem": "File does not exist: <file>",
+        "cause": "Device is telling application the file does not exist on storage.",
+        "resolution": "Ensure storage is accessible, verify correct path name is provided, and the application is granted storage access."
+      },
+      {
+        "problem": "File does not have read permissions: <file>",
+        "cause": "File is found, however device is rejecting access permission to the application.",
+        "resolution": "Check the permissions on the file, and ensure application is granted storage access."
+      },
+      {
+        "problem": "Error: File is not a valid pack (.cpak, .xpak, .apak): <file>",
+        "cause": "Application will only accept the following file extensions: .cpak, .xpak, .apak",
+        "resolution": "Choose a new file, or if you believe this file is a Tooled Up pack, rename the file and try again."
+      }
+    ]
+  },
+  {
+    "title": "Phase 2",
+    "data": [
+      {
+        "problem": "Invalid pack, file cannot be accessed: <module>",
+        "cause": "Application could not create a pack from a file.",
+        "resolution": "Ensure correct path, file system permissions, and application storage access. New download or copy of file may be required, device is preventing application from accessing file for indeterminate reason."
+      },
+      {
+        "problem": "Cannot read pack. Please check download integrity: <file>",
+        "cause": "Pack can be accessed, however application cannot process the data. File is either not a true Tooled Up pack, or the file is not transfered to device correctly.",
+        "resolution": "Verify the file integrity with the original source. If file integrity is 100%, open as a zip and ensure the JSON details match the pack file type."
+      },
+      {
+        "problem": "Skipping file, source and target are the same: <file>",
+        "cause": "Application will not attempt to install a file to the same location it is already installed.",
+        "resolution": "Choose a file that is not already installed."
+      },
+      {
+        "problem": "Cannot overwrite current version. Remove existing pack and retry. Found <old version> and expected: <new version> or older: <file>",
+        "cause": "Application prevents downgrading pack versions to prevent accidental overwrites.",
+        "resolution": "Remove old pack manually if you wish to downgrade, or if the pack should be a new version then updated the JSON file in the pack."
+      },
+      {
+        "problem": "Unable to backup existing pack. Remove existing pack and retry: <file>",
+        "cause": "If an existing file is found and cannot be moved to a backup status, the application will not attempt to overwrite to prevent damage.",
+        "resolution": "Backups are used to restore automatically if import fails. Check the file system permissions, and ensure application is granted storage access. If you wish to bypass the backup, you may remove the existing pack manually."
+      },
+      {
+        "problem": "Permission failure backing up existing pack. Remove manually or check permissions on folder and retry: <file>",
+        "cause": "If an existing file is found and cannot be moved to a backup status, the application will not attempt to overwrite to prevent damage.",
+        "resolution": "Backups are used to restore automatically if import fails. Check the file system permissions, and ensure application is granted storage access. If you wish to bypass the backup, you may remove the existing pack manually."
+      },
+      {
+        "problem": "Permission failure creating folder. Check permissions and retry: <file>",
+        "cause": "Permissions are not set correctly on the application folder.",
+        "resolution": "Correct read and write permissions on folder to allow application access."
+      },
+      {
+        "problem": "Failed to create folder. Please check storage access and retry: <file>",
+        "cause": "Folder creation failed due to device access.",
+        "resolution": "Ensure storage is accessible and the application is granted storage access."
+      },
+      {
+        "problem": "Not enough free space for new installation. Please free space and try again. Restoring backup: <file>",
+        "cause": "The device does not have enough free space to install the selected pack.",
+        "resolution": "Free enough space on the device to install pack."
+      },
+      {
+        "problem": "Could not import file. Please check storage access and retry. Restoring backup: <file>",
+        "cause": "File could not be transferred to application folder.",
+        "resolution": "Verify storage is accessible and retry the import operation. This error is related to the Operating System copy operation, and you may have bad storage, permissions, or device configurations if failures continue to occur."
+      },
+      {
+        "problem": "Integrity check failed. Please verify download and retry. Expected: <new chescksum> - Found: <import checksum> : <file>",
+        "cause": "Import operation completed, but integrity did not match original file.",
+        "resolution": "Retry import operation. If import continues to fail, check the integrity of the file with the distributor and/or obtain a new copy. It is also possible this is related to the Operating System copy operation, and you may have intermittent bad storage, permissions, or device configuration issues if failures continue to occur."
+      },
+      {
+        "problem": "Correction Successful - Restored backup: <backup file>",
+        "cause": "Informational only. This will occur if a previous failure happened, and pack was restored from a local backup.",
+        "resolution": "No action required."
+      },
+      {
+        "problem": "Failed to restore backup. Please check storage access and rename file manually to remove '.bk': <backup file>",
+        "cause": "Import operation failed, and attempt to restore the backup failed. Pack will not be accessible until manually renamed or re-imported.",
+        "resolution": "Import the pack from an original file or manually rename the backup specified to no longer include '.bk' from the name. The backup file will remain on the system until removed or renamed."
+      },
+      {
+        "problem": "No backup file found, skipping restore: <backup file>",
+        "cause": "Informational only. No backup file was found during a restore operation.",
+        "resolution": "No action required. Import failed from a previous error, but there was no backup to restore."
+      },
+      {
+        "problem": "Failure removing damaged import, please remove manually: <file>",
+        "cause": "Application was denied during delete, could not automatically remove the failed import.",
+        "resolution": "Retry import or manually remove the file."
+      },
+      {
+        "problem": "Could not clean backup, but import was successful. Please remove manually: <backup file>",
+        "cause": "Import completed, but backup could not be deleted.",
+        "resolution": "No action required, however the backup can be manually removed from storage."
+      }
+    ]
+  },
+  {
+    "title": "Phase 2, AIO pack only",
+    "data": [
+      {
+        "problem": "Cannot find AIO integrity manifest. Check file integrity and try again. Checksum: <checksum>",
+        "cause": "All-in-one pack is missing an integrity manifest file, or the AIO pack itself cannot be read.",
+        "resolution": "Most common cause is a bad download from distributor. This can be caused from the browser or bad internet connection. Verify the AIO checksum with the distributor, and/or obtain a new copy. For example, attempt to download with a new browser, or copy from a different local device. If the checksum is correct, verify the zip contains a manifest with the checksums of all the files in the zip."
+      },
+      {
+        "problem": "Not enough free space to extract packs. Please free space and try again: <pack>",
+        "cause": "Device does not have enough space to extract and install pack.",
+        "resolution": "Free enough space on device to install pack."
+      },
+      {
+        "problem": "Could not completely process AIO file. Please check errors and retry: <file>",
+        "cause": "One or more files inside AIO pack could not be processed.",
+        "resolution": "Resolve oustanding errors from other output. May be related to storage space, permissions, or integrity checks."
+      }
+    ]
+  }
+]

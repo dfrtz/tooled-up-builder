@@ -1,0 +1,191 @@
+{
+  "title": "Card Pack",
+  "description": "A pack of cards representing game Models.",
+  "type": "object",
+  "properties": {
+    "set": {
+      "title": "Game Name",
+      "description": "Folder where the pack will be installed. Packs in same 'set' share resources and are isolated from packs in different sets.",
+      "type": "string"
+    },
+    "title": {
+      "title": "Pack Name",
+      "description": "File name during installation. Pack names must be unique.",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "description": "Provides installation and update checks. Prevents overwriting newer packs with the same name.",
+      "type": "number"
+    },
+    "group": {
+      "title": "Group Tag",
+      "description": "Tag applied to all cards loaded into pack to enhance filtering options. Allows cross-pack display in Library and Deck Manager.",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "description": "Details shown on summary page of pack.",
+      "type": "string"
+    },
+    "compatibility": {
+      "title": "Cross-Game Compatibility Tag",
+      "description": "Unique identifier to allow resource sharing between 'sets'. Support currently under development.",
+      "type": "string"
+    },
+    "cards": {
+      "title": "Cards",
+      "description": "Collection of cards representing models and subversions of models.",
+      "type": "array",
+      "items": {
+        "title": "Card",
+        "description": "Unique data representing a game Card or Model.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "ID",
+            "description": "Unique identifier within entire 'set' in format XRRRR; X representing be the card number in pack, and RRRR representing revisions for the same card from 0-9999.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000000000000
+          },
+          "title": {
+            "title": "Name",
+            "description": "Name of card.",
+            "type": "string"
+          },
+          "subtitle": {
+            "title": "Custom Subtitle",
+            "description": "Overrides subtitle used in list views. Default subtitle is built from card values and expansion specified format.",
+            "type": "string"
+          },
+          "legacy": {
+            "title": "Legacy Title",
+            "description": "Represents deprecated cards. Any card with a 'legacy' value is hidden by default in the Library, and shows a fine print when displayed.",
+            "type": "string"
+          },
+          "groups": {
+            "title": "Member Groups",
+            "description": "Comma seperated list of 'group' tags used for filtering. Add 'group' tags if card should be visible in other packs besides parent pack.",
+            "type": "string"
+          },
+          "private": {
+            "title": "Private Side",
+            "description": "Default side to show in a match to prevent other players from knowing what card it is.",
+            "type": "integer"
+          },
+          "landscape": {
+            "title": "Orientation",
+            "description": "Override default card orientation (portrait).",
+            "type": "boolean",
+            "default": false
+          },
+          "content": {
+            "title": "Images",
+            "description": "Image paths representing card sides.",
+            "type": "array",
+            "items": {
+              "title": "",
+              "description": "Path to image. Paths beginning with / will use the 'set' folder as root; without / it will use the parent pack file.",
+              "type": "string"
+            }
+          },
+          "versions": {
+            "title": "Versions",
+            "description": "Set of card subsets with the same base ID. Multiple versions can be added to a card to represent different portions, for example, if the same card can be either a set of models or single model.",
+            "type": "array",
+            "items": {
+              "title": "Version",
+              "description": "Collection of details representing a specific subset of a card.",
+              "type": "object",
+              "properties": {
+                "title": {
+                  "title": "Name",
+                  "description": "Name of the version used in lists. When empty, default name is 'Version' + 'Position in array'",
+                  "type": "string"
+                },
+                "values": {
+                  "title": "Card Values",
+                  "description": "Comma separated list of values used in subtitles and filtering. Must match expansion pack 'value types'. Requires a 'Category' type be provided for list sorting.",
+                  "type": "string"
+                },
+                "hitboxes": {
+                  "title": "Hitboxes",
+                  "description": "Collection of hitboxes representing a model's total life trackers. Multiple hitboxes can be added to make a multi category hitbox.",
+                  "type": "array",
+                  "items": {
+                    "title": "Hitbox",
+                    "description": "A set of life trackers with configurable modifiers. In a multi-hitbox system it is a single category.",
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "title": "Title",
+                        "description": "Name of hitbox displayed on health modifier buttons.",
+                        "type": "string"
+                      },
+                      "color": {
+                        "title": "Color",
+                        "description": "Hexidecimal representation of default color. Supports RGB or ARGB formats.",
+                        "type": "string",
+                        "pattern": "^#[a-fA-F0-9]"
+                      },
+                      "defaultX": {
+                        "title": "X",
+                        "description": "Default X coordinate. Overridden by X values in coordinate set",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000
+                      },
+                      "defaultY": {
+                        "title": "Y",
+                        "description": "Default Y coordinate. Overridden by Y values in coordinate set",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000
+                      },
+                      "defaultZ": {
+                        "title": "Z",
+                        "description": "Default Z (or card side) coordinate. Overridden by Z value in coordinate set. 1 = first visible card side",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10
+                      },
+                      "defaultSize": {
+                        "title": "Radius",
+                        "description": "Default marker size. Overridden by marker values in coordinate set.",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 500
+                      },
+                      "defaultShape": {
+                        "title": "Shape",
+                        "description": "Default marker shape. Overridden by shape values in coordinate set. 0 = circle, 1 = square",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "values": {
+                        "title": "Coordinate Pairs",
+                        "description": "Comma separated value sets representing coordinate characteristics. Coordinate format: X,Y,Z,Size,Color,Shape",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "values"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "set",
+    "title",
+    "version",
+    "group"
+  ]
+}

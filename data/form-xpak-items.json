@@ -1,0 +1,93 @@
+{
+  "cardValues": [
+    {
+      "key": "cardValues",
+      "title": "",
+      "type": "array",
+      "startEmpty": true,
+      "add": "Add Value",
+      "remove": "Delete Value",
+      "htmlClass": "borderless",
+      "style": {
+        "add": "pull-left mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+      },
+      "items": [
+        {
+          "type": "section",
+          "htmlClass": "row",
+          "items": [
+            {
+              "key": "cardValues[].type",
+              "htmlClass": "col-xs-3"
+            },
+            {
+              "key": "cardValues[].title",
+              "htmlClass": "col-xs-4"
+            },
+            {
+              "key": "cardValues[].default",
+              "htmlClass": "col-xs-4"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "titles": [
+    {
+      "type": "template",
+      "template": "<div class=\"md-headline margin-small\" md-colors=\"{color:'primary-700'}\">Titles</div>"
+    },
+    {
+      "type": "section",
+      "htmlClass": "row margin-small",
+      "items": [
+        {
+          "key": "titles.cardStacks",
+          "title": "Match Tabs",
+          "type": "array",
+          "startEmpty": true,
+          "add": "Add Stack",
+          "remove": "Delete Stack",
+          "htmlClass": "borderless",
+          "style": {
+            "add": "pull-left mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+          }
+        }
+      ]
+    },
+    {
+      "type": "template",
+      "template": "<div class=\"whitespace\"></div>"
+    },
+    {
+      "type": "template",
+      "template": "<div class=\"md-headline margin-small\" md-colors=\"{color:'primary-700'}\">Subtitles</div>"
+    },
+    {
+      "type": "section",
+      "htmlClass": "row margin-small",
+      "items": [
+        {
+          "title": "Cards",
+          "key": "subtitles.card"
+        },
+        {
+          "title": "Cards Short",
+          "key": "subtitles.cardShort"
+        },
+        {
+          "title": "Match Tabs",
+          "key": "subtitles.cardStack"
+        },
+        {
+          "title": "Deck Summary",
+          "key": "subtitles.deck"
+        }
+      ]
+    }
+  ],
+  "clocks": [],
+  "scores": [],
+  "actions": []
+}
