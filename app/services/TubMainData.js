@@ -1,11 +1,6 @@
 angular.module('tooledUpBuilder').factory('MainData', function() {
     var self = this;
 
-    function init() {
-        self.cpak.imageWorkerPool.cacheEnabled = true;
-        self.xpak.imageWorkerPool.cacheEnabled = true;
-    }
-
     self.cpak = {
         zipFile: new JSZip(),
         packData: new CardPack(),
@@ -14,7 +9,7 @@ angular.module('tooledUpBuilder').factory('MainData', function() {
         originalName: undefined,
         imageCache: [],
         imageWorkerPool: new Solari.utils.WorkerPool({threads: 1}),
-        bannerData: "./images/promo.jpg",
+        bannerData: "images/promo.jpg",
         formPack: undefined,
         formCards: undefined,
 
@@ -29,7 +24,7 @@ angular.module('tooledUpBuilder').factory('MainData', function() {
         originalName: undefined,
         imageCache: [],
         imageWorkerPool: new Solari.utils.WorkerPool({threads: 1}),
-        bannerData: "./images/promo.jpg",
+        bannerData: "images/promo.jpg",
         formPack: undefined
     };
 
@@ -39,9 +34,14 @@ angular.module('tooledUpBuilder').factory('MainData', function() {
         prettyPrintSave: true,
 
         originalName: undefined,
-        bannerData: "./images/promo.jpg",
+        bannerData: "images/promo.jpg",
         formPack: undefined
     };
+
+    function init() {
+        self.cpak.imageWorkerPool.cacheEnabled = true;
+        self.xpak.imageWorkerPool.cacheEnabled = true;
+    }
 
     self.getPack = function(type) {
         switch(type) {
@@ -248,7 +248,6 @@ angular.module('tooledUpBuilder').factory('MainData', function() {
                 self.cache = zip;
                 self.postMessage({cmdResult: 'initCache'});
             }, function error(e){});
-            return;
         }
     };
 
