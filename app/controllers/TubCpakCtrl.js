@@ -8,7 +8,7 @@
  * @copyright 2015-2017 Solari Studios, http://solaristudios.com
  * @license MIT
  */
-angular.module('tooledUpBuilder').controller('TubCpakCtrl', ['MainData', '$rootScope', '$scope', '$timeout', '$mdColors', '$mdDialog', '$mdToast', TubCpakCtrl]);
+angular.module("tooledUpBuilder").controller("TubCpakCtrl", ["MainData", "$rootScope", "$scope", "$timeout", "$mdColors", "$mdDialog", "$mdToast", TubCpakCtrl]);
 
 function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialog, $mdToast) {
     var self = this;
@@ -28,7 +28,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
      * Must be called at end of assignments.
      */
     function init() {
-        document.getElementById('cpak-file-input').addEventListener('change', function () {
+        document.getElementById("cpak-file-input").addEventListener("change", function () {
             Solari.ui.onSelectFiles(event, loadFiles);
         });
     }
@@ -41,7 +41,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
         pack.imageCache.length = 0;
         pack.imageWorkerPool.cacheData = undefined;
         pack.imageWorkerPool.initCache();
-        $scope.$broadcast('selectCard', {
+        $scope.$broadcast("selectCard", {
             position: 0
         });
     }
@@ -57,7 +57,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
         for (var i = 0; i < ofiles.length; i++) {
             files.push(ofiles[i]);
         }
-        document.getElementById('file-uploads').reset();
+        document.getElementById("file-uploads").reset();
 
         // We can only access user selected files from web input
         if (files.length > 0) {
@@ -85,14 +85,14 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
      * @param {File} file File object to load.
      */
     function processFile(file) {
-        var extension = file.name.split('.').pop();
+        var extension = file.name.split(".").pop();
         if (extension === "json") {
             Solari.json.readFile(file, function (data) {
                 // Set form model data, and current Card data
                 pack.lastXpakSplitValues = Solari.json.duplicate(MainData.xpak.packData.cardValues);
                 pack.packData.readObject(MainData.preprocessCpak(data, pack.lastXpakSplitValues));
                 pack.originalName = pack.packData.title;
-                $scope.$broadcast('selectCard', {
+                $scope.$broadcast("selectCard", {
                     position: 0
                 });
 
@@ -126,7 +126,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
                     pack.packData.readObject(MainData.preprocessCpak(JSON.parse(content), pack.lastXpakSplitValues));
 
                     pack.originalName = pack.packData.title;
-                    $scope.$broadcast('selectCard', {
+                    $scope.$broadcast("selectCard", {
                         position: 0
                     });
 
@@ -188,7 +188,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
         var newTitle = pack.packData.title;
 
         // TODO allow saving JSON only
-        //Solari.file.saveObjectURL(newTitle + '.json', Solari.json.makeObjectURL(json));
+        //Solari.file.saveObjectURL(newTitle + ".json", Solari.json.makeObjectURL(json));
 
         if (newTitle !== oldTitle) {
             // Remove original title based files
@@ -207,9 +207,9 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
 
         pack.zipFile.generateAsync({type: "arraybuffer"})
             .then(function (content) {
-                var name = newTitle + '.cpak';
+                var name = newTitle + ".cpak";
                 if (saveToAIO) {
-                    $rootScope.$broadcast('sendToAIO', {
+                    $rootScope.$broadcast("sendToAIO", {
                         path: name,
                         data: content
                     });
@@ -226,7 +226,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
      */
     function onSave(sendToAIO) {
         // Broadcast an event so all fields validate themselves
-        $scope.$broadcast('schemaFormValidate');
+        $scope.$broadcast("schemaFormValidate");
 
         // Check if the forms and pack data are valid
         if (pack.packData.validate() && pack.formPack.$valid && pack.formCards.$valid) {
@@ -304,7 +304,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
     };
 
     // Listen for broadcasts and value changes
-    $scope.$on('sendToCpak', receivePack);
+    $scope.$on("sendToCpak", receivePack);
 
     $scope.$watch(function () {
         return pack.packData.title;

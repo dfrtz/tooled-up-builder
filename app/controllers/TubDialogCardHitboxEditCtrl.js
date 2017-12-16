@@ -7,10 +7,11 @@
  * @copyright 2015-2017 Solari Studios, http://solaristudios.com
  * @license MIT
  */
-angular.module('tooledUpBuilder').controller('TubDialogCardHitboxEditCtrl', ['$scope', '$mdDialog', 'card', 'version', 'hitbox', 'getCachedImageByName', '$mdToast', '$timeout', TubDialogCardHitboxEditCtrl]);
+angular.module("tooledUpBuilder").controller("TubDialogCardHitboxEditCtrl", ["$scope", "$mdDialog", "card", "version", "hitbox", "getCachedImageByName", "$mdToast", "$timeout", TubDialogCardHitboxEditCtrl]);
 
 function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, getCachedImageByName, $mdToast, $timeout) {
     var self = this;
+    var flipperCtrl;
 
     self.versionIndex = version;
     self.hitboxIndex = hitbox;
@@ -22,14 +23,28 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
     self.coords = [];
     self.selectedCoord = undefined;
 
-    var flipperCtrl;
-
+    /**
+     * Initializes controller by executing first run operations.
+     *
+     * Must be called at end of assignments.
+     */
     function init() {
         self.coords = preprocessCoords(self.activeHitbox.values, getDefaults(self.activeHitbox));
     }
 
-    init();
-
+    /**
+     * Converts and validates value sets into valid display Coordinates.
+     *
+     * @param {string} values Comma separated value sets separated by spaces.
+     * @param {object|undefined} defaults Initialization options for coordinates.
+     * @param {number} defaults.x X-Axis coordinate position.
+     * @param {number} defaults.y Y-Axis coordinate position.
+     * @param {number} defaults.z Z-Axis coordinate position.
+     * @param {number} defaults.size Radius of coordinate.
+     * @param {string} defaults.color Text representing a hexidecimal (0-9A-F) color.
+     * @param {number} defaults.shape Number representing shape. 0 = Circle, 1 = Square.
+     * @returns {Coordinate[]} List of Coordinates with valid parameters.
+     */
     function preprocessCoords(values, defaults) {
         var coords = [];
         if (!defaults) {
@@ -37,10 +52,10 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         }
 
         if (values) {
-            var tuples = values.split(' ');
+            var tuples = values.split(" ");
 
             for (var i = 0; i < tuples.length; i++) {
-                var tuple = tuples[i].split(',');
+                var tuple = tuples[i].split(",");
                 var x = parseInt(tuple[0]) || defaults.x;
                 var y = parseInt(tuple[1]) || defaults.y;
                 var z = parseInt(tuple[2]) || defaults.z;
@@ -55,6 +70,19 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         return coords;
     }
 
+    /**
+     * Converts Coordinate list into a minimalist string with default values removed.
+     *
+     * @param {Coordinate[]} coords List of Coordinates to process.
+     * @param {object|undefined} defaults Comparison values for Coordinates, matching values will be removed.
+     * @param {number} defaults.x X-Axis coordinate position.
+     * @param {number} defaults.y Y-Axis coordinate position.
+     * @param {number} defaults.z Z-Axis coordinate position.
+     * @param {number} defaults.size Radius of coordinate.
+     * @param {string} defaults.color Text representing a hexidecimal (0-9A-F) color.
+     * @param {number} defaults.shape Number representing shape. 0 = Circle, 1 = Square.
+     * @returns {string} List of Coordinates with valid parameters.
+     */
     function postprocessCoords(coords, defaults) {
         var tuples = [];
 
@@ -65,7 +93,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         var defaultColor = Solari.ui.rgbaStringToHex(defaults.color);
         for (var i = 0; i < coords.length; i++) {
             var coord = coords[i];
-            var tuple = '';
+            var tuple = "";
             var x = parseInt(coord.x) || defaults.x;
             var y = parseInt(coord.y) || defaults.y;
             var z = parseInt(coord.z) || defaults.z;
@@ -73,32 +101,41 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
             var color = Solari.ui.rgbaStringToHex(coord.color) || defaultColor;
             var shape = parseInt(coord.shape) || defaults.shape;
 
-            x = x === defaults.x ? '' : x;
-            y = y === defaults.y ? '' : y;
-            z = z === defaults.z ? '' : z;
-            size = size === defaults.size ? '' : size;
-            color = color === defaultColor ? '' : color;
-            shape = shape === defaults.shape ? '' : shape;
+            x = x === defaults.x ? "" : x;
+            y = y === defaults.y ? "" : y;
+            z = z === defaults.z ? "" : z;
+            size = size === defaults.size ? "" : size;
+            color = color === defaultColor ? "" : color;
+            shape = shape === defaults.shape ? "" : shape;
 
-            tuple = Solari.utils.format('{0},{1},{2},{3},{4}', x, y, z, size, color, shape).replace(/,+$/, '');
+            tuple = Solari.utils.format("{0},{1},{2},{3},{4}", x, y, z, size, color, shape).replace(/,+$/, "");
             tuples.push(tuple);
         }
 
-        return tuples.join(' ');
+        return tuples.join(" ");
     }
 
+    /**
+     * Updates the drawing dimensions for a canvas.
+     *
+     * @param {number} index Position of canvas in flipper list.
+     */
     function onUpdateGridSize(index) {
         var canvas = self.canvases[index];
-
         canvas.setDimensions(self.canvasWidth, self.canvasHeight);
-
         canvas.drawRatio = self.canvasHeight / 1000;
     }
 
+    /**
+     * Updates the Coordinates for a single canvas.
+     *
+     * @param {number} index Position of canvas in flipper list.
+     */
     function onUpdateCoordList(index) {
         var canvas = self.canvases[index];
         var side = index + 1;
 
+        // Z-Axis is equ
         for (var i = 0; i < self.coords.length; i++) {
             var coord = self.coords[i];
 
@@ -108,6 +145,11 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         }
     }
 
+    /**
+     * Provide a set of default values for Coordinates based on hitbox or predefined system defaults.
+     * @param {Object} hitbox
+     * @returns {{x: number, y: number, z: number, size: number, color: string, shape: number}}
+     */
     function getDefaults(hitbox) {
         if (!hitbox) {
             hitbox = {};
@@ -118,7 +160,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
             y: hitbox.defaultY || 0,
             z: hitbox.defaultZ || 1,
             size: hitbox.defaultSize || 20,
-            color: Solari.ui.hexToRGBA(hitbox.color) || Solari.ui.hexToRGBA('#ccd01716'),
+            color: Solari.ui.hexToRGBA(hitbox.color) || Solari.ui.hexToRGBA("#ccd01716"),
             shape: hitbox.defaultShape || 0
         };
     }
@@ -133,7 +175,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
     self.initCanvas = function (index) {
         var defaults = getDefaults(self.activeHitbox);
 
-        var canvas = new Solari.ui.CoordinateCanvas(document.getElementById('canvas' + index));
+        var canvas = new Solari.ui.CoordinateCanvas(document.getElementById("canvas" + index));
         self.canvases.splice(index, 0, canvas);
 
         onUpdateGridSize(index);
@@ -186,7 +228,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
 
         self.canvases[flipperCtrl.position].selectCoordinate(undefined, true);
 
-        $scope.simpleToast('Coordinates locked, card flipping enabled');
+        $scope.simpleToast("Coordinates locked, card flipping enabled");
     };
 
     self.onUnlockCanvas = function () {
@@ -197,7 +239,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
             self.canvases[i].unlock();
         }
 
-        $scope.simpleToast('Coordinates unlocked, card flipping disabled.');
+        $scope.simpleToast("Coordinates unlocked, card flipping disabled.");
     };
 
     self.getImage = function (name) {
@@ -205,7 +247,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
 
         return "data:image/png;base64," + image.data;
     };
-    
+
     /**
      * Provides fractional representation of card ratio based on orientation.
      *
@@ -276,11 +318,11 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
     };
 
     self.xGetterSetter = function (x) {
-        return self.posGetterSetter('x', x);
+        return self.posGetterSetter("x", x);
     };
 
     self.yGetterSetter = function (y) {
-        return self.posGetterSetter('y', y);
+        return self.posGetterSetter("y", y);
     };
 
     self.zGetterSetter = function (z) {
@@ -293,11 +335,11 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
             }, 100);
         }
 
-        return self.posGetterSetter('z', z);
+        return self.posGetterSetter("z", z);
     };
 
     self.sizeGetterSetter = function (size) {
-        return self.posGetterSetter('size', size);
+        return self.posGetterSetter("size", size);
     };
 
     self.onMoveCoord = function (direction) {
@@ -305,14 +347,14 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
             return;
         }
 
-        if (direction === 'u') {
-            self.posGetterSetter('y', self.selectedCoord.y - 1);
-        } else if (direction === 'd') {
-            self.posGetterSetter('y', self.selectedCoord.y + 1);
-        } else if (direction === 'l') {
-            self.posGetterSetter('x', self.selectedCoord.x - 1);
-        } else if (direction === 'r') {
-            self.posGetterSetter('x', self.selectedCoord.x + 1);
+        if (direction === "u") {
+            self.posGetterSetter("y", self.selectedCoord.y - 1);
+        } else if (direction === "d") {
+            self.posGetterSetter("y", self.selectedCoord.y + 1);
+        } else if (direction === "l") {
+            self.posGetterSetter("x", self.selectedCoord.x - 1);
+        } else if (direction === "r") {
+            self.posGetterSetter("x", self.selectedCoord.x + 1);
         }
     };
 
@@ -351,13 +393,20 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         $mdDialog.hide(postprocessCoords(self.coords, getDefaults(self.activeHitbox)));
     };
 
+    /**
+     * Displays a quick information popup message on bottom right of the screen.
+     *
+     * @param {string} message Text to display.
+     */
     $scope.simpleToast = function (message) {
         var toast = $mdToast.simple()
             .textContent(message)
             .highlightAction(true)
-            .highlightClass('md-accent')
+            .highlightClass("md-accent")
             .position("bottom right")
             .hideDelay(3000);
         $mdToast.show(toast);
     };
+
+    init();
 }
