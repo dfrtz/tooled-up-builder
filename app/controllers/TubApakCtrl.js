@@ -52,7 +52,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
     }
 
     /**
-     * Loads new pack files into the current apak.
+     * Loads Apak related data from files into the current apak.
      *
      * @param {File[]} ofiles Array of files to parse.
      */
