@@ -1,5 +1,6 @@
 /**
- * @file A Tooled Up - Builder app controller to view card image data from cache.
+ * @file A Tooled Up - Builder app controller to view card image data from cache. This controller does not provide any
+ * editing ability.
  *
  * @author David Fritz
  * @version 1.0.0
@@ -13,13 +14,12 @@ function TubDialogPreviewCardCtrl($scope, $mdDialog, card, getCachedImageByName)
     $scope.card = card;
 
     /**
-     * Gets image information from in format that can be displayed in HTML element.
+     * Retrieves image data for display as a view's background.
      *
-     * @param {string} name Image name stored in cache.
-     *
-     * @returns {string} Text representing image from cache.
+     * @param {string} name Canonical image path.
+     * @returns {string} Formatted data that can be set as a background in DOM.
      */
-    $scope.getImage = function (name) {
+    self.getImage = function (name) {
         var image = getCachedImageByName(name);
 
         return "data:image/png;base64," + image.data;
@@ -38,14 +38,23 @@ function TubDialogPreviewCardCtrl($scope, $mdDialog, card, getCachedImageByName)
         }
     };
 
+    /**
+     * Hides popup dialog without making any changes to data.
+     */
     $scope.hide = function () {
         $mdDialog.hide();
     };
 
+    /**
+     * Hides popup dialog without making any changes to data.
+     */
     $scope.cancel = function () {
         $mdDialog.cancel();
     };
 
+    /**
+     * Hides popup dialog without making any changes to data.
+     */
     $scope.answer = function (answer) {
         $mdDialog.hide(answer);
     };

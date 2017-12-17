@@ -1,5 +1,5 @@
 /**
- * @file A Tooled Up - Builder app controller to view and edit Card hitbox Coordinate data.
+ * @file A Tooled Up - Builder app controller to view and edit Card Hitbox Coordinate data.
  *
  * @author David Fritz
  * @version 1.0.0
@@ -118,7 +118,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
     /**
      * Updates the drawing dimensions for a canvas.
      *
-     * @param {number} index Position of canvas in flipper list.
+     * @param {number} index Position of canvas in flipper list. Also represents Z-Axis from coordinates.
      */
     function onUpdateGridSize(index) {
         var canvas = self.canvases[index];
@@ -129,13 +129,13 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
     /**
      * Updates the Coordinates for a single canvas.
      *
-     * @param {number} index Position of canvas in flipper list.
+     * @param {number} index Position of canvas in flipper list. Also represents Z-Axis from coordinates.
      */
     function onUpdateCoordList(index) {
         var canvas = self.canvases[index];
         var side = index + 1;
 
-        // Z-Axis is equ
+        // Z-Axis represents a card's face, and should only show the coordinates from that 'layer'
         for (var i = 0; i < self.coords.length; i++) {
             var coord = self.coords[i];
 
@@ -146,9 +146,17 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
     }
 
     /**
-     * Provide a set of default values for Coordinates based on hitbox or predefined system defaults.
-     * @param {Object} hitbox
-     * @returns {{x: number, y: number, z: number, size: number, color: string, shape: number}}
+     * Provides a set of default values for Coordinates using system defaults of a Hitbox's values where defined.
+     *
+     * @param {object|undefined} hitbox User defined values for Coordinates, missing values will be added.
+     * @param {number|undefined} hitbox.defaultX X-Axis coordinate position.
+     * @param {number|undefined} hitbox.defaultY Y-Axis coordinate position.
+     * @param {number|undefined} hitbox.defaultZ Z-Axis coordinate position.
+     * @param {number|undefined} hitbox.defaultSize Radius of coordinate.
+     * @param {string|undefined} hitbox.color Text representing a hexidecimal (0-9A-F) color.
+     * @param {number|undefined} hitbox.defaultShape Number representing shape. 0 = Circle, 1 = Square.
+     * @returns {{x: number, y: number, z: number, size: number, color: string, shape: number}} Value set with no
+     * undefined values
      */
     function getDefaults(hitbox) {
         if (!hitbox) {
@@ -165,6 +173,10 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         };
     }
 
+    /**
+     * Initializes the Flipper view's values in this controller for access by other views after it has been created in
+     * the DOM.
+     */
     self.initFlipper = function () {
         flipperCtrl = angular.element(document.getElementById("flipper")).scope().getController();
 
@@ -172,6 +184,11 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         self.canvasHeight = parseFloat(flipperCtrl.height);
     };
 
+    /**
+     * Initializes a canvas view's dimensions and Coordinate information after being created in DOM.
+     *
+     * @param {number} index Position of canvas in Flipper list. Also represents Z-Axis from coordinates.
+     */
     self.initCanvas = function (index) {
         var defaults = getDefaults(self.activeHitbox);
 
@@ -218,6 +235,9 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         });
     };
 
+    /**
+     * Locks all canvases in Flipper to prevent editing, and enables Flipper animations.
+     */
     self.onLockCanvas = function () {
         flipperCtrl.disabled = false;
         self.canvasLock = true;
@@ -231,6 +251,9 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         $scope.simpleToast("Coordinates locked, card flipping enabled");
     };
 
+    /**
+     * Unlocks all canvases in Flipper to allow editing, and disables Flipper animations.
+     */
     self.onUnlockCanvas = function () {
         flipperCtrl.disabled = true;
         self.canvasLock = false;
@@ -242,6 +265,12 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         $scope.simpleToast("Coordinates unlocked, card flipping disabled.");
     };
 
+    /**
+     * Retrieves image data for display as a view's background.
+     *
+     * @param {string} name Canonical image path.
+     * @returns {string} Formatted data that can be set as a background in DOM.
+     */
     self.getImage = function (name) {
         var image = getCachedImageByName(name);
 
@@ -261,6 +290,11 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         }
     };
 
+    /**
+     * Provides the grid dimensions based on orientation of Card.
+     *
+     * @returns {{x: number, y: number}} Maximum X and Y axis values for rendering grids.
+     */
     self.getGridSize = function () {
         if (card.landscape) {
             return {x: 1000, y: 750};
@@ -269,6 +303,12 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         }
     };
 
+    /**
+     * Retrieves the currently selected coordinate's ID or sets a new ID to the selected coordinate.
+     *
+     * @param {number} id New position of selected coordinate.
+     * @returns {number|undefined} ID of selected coordinate if getting, or Undefined if setting.
+     */
     self.idGetterSetter = function (id) {
         if (arguments.length && self.selectedCoord) {
             var newId = id - 1;
@@ -289,6 +329,13 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         return undefined;
     };
 
+    /**
+     * Retrieves the currently selected coordinate's color or sets a new color to the selected coordinate.
+     *
+     * @param {string} color Text representing a hexidecimal (0-9A-F) color.
+     * @returns {string|undefined} Text representing a hexidecimal (0-9A-F) color of selected coordinate if getting,
+     * or Undefined if setting.
+     */
     self.colorGetterSetter = function (color) {
         if (arguments.length && self.selectedCoord) {
             var newColor = Solari.ui.hexToRGBA(color);
@@ -306,6 +353,14 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         return undefined;
     };
 
+    /**
+     * Retrieves the currently selected coordinate's axis data or updates axis data on the selected coordinate.
+     *
+     * @param {string} axis Axis of coordinate to edit. Options: x, y, z, or size.
+     * @param {number} value New position of selected coordinate on specified axis.
+     * @returns {{x: number, y: number, z: number}} Axis information of selected coordinate if getting, or Undefined if
+     * setting.
+     */
     self.posGetterSetter = function (axis, value) {
         if (value && self.selectedCoord) {
             self.selectedCoord[axis] = value;
@@ -317,31 +372,61 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         return undefined;
     };
 
-    self.xGetterSetter = function (x) {
-        return self.posGetterSetter("x", x);
+    /**
+     * Retrieves the currently selected coordinate's X axis data or updates X axis data on the selected coordinate.
+     *
+     * @param {number} xPos New X axis position of selected coordinate.
+     * @returns {number} X axis information of selected coordinate if getting, or Undefined if setting.
+     */
+    self.xGetterSetter = function (xPos) {
+        return self.posGetterSetter("x", xPos);
     };
 
-    self.yGetterSetter = function (y) {
-        return self.posGetterSetter("y", y);
+    /**
+     * Retrieves the currently selected coordinate's Y axis data or updates Y axis data on the selected coordinate.
+     *
+     * @param {number} yPos New Y axis position of selected coordinate.
+     * @returns {number} Y axis information of selected coordinate if getting, or Undefined if setting.
+     */
+    self.yGetterSetter = function (yPos) {
+        return self.posGetterSetter("y", yPos);
     };
 
-    self.zGetterSetter = function (z) {
-        if (z && self.selectedCoord) {
+    /**
+     * Retrieves the currently selected coordinate's Z axis data or updates Z axis data on the selected coordinate.
+     *
+     * @param {number} zPos New Z axis position of selected coordinate.
+     * @returns {number} Z axis information of selected coordinate if getting, or Undefined if setting.
+     */
+    self.zGetterSetter = function (zPos) {
+        if (zPos && self.selectedCoord) {
             self.canvases[self.selectedCoord.z - 1].removeCoordinate(self.selectedCoord.id, false, true);
-            self.canvases[z - 1].addCoordinate(self.selectedCoord);
+            self.canvases[zPos - 1].addCoordinate(self.selectedCoord);
 
             $timeout(function () {
                 self.canvases[0].invalidate();
             }, 100);
         }
 
-        return self.posGetterSetter("z", z);
+        return self.posGetterSetter("z", zPos);
     };
 
+    /**
+     * Retrieves the currently selected coordinate's radius or updates radius on the selected coordinate.
+     *
+     * @param {number} size New radius of selected coordinate.
+     * @returns {number} Radius of selected coordinate if getting, or Undefined if setting.
+     */
     self.sizeGetterSetter = function (size) {
         return self.posGetterSetter("size", size);
     };
 
+    /**
+     * Performs a single move operation on the selected coordinate in one direction on a 2D plane.
+     *
+     * @param {string} direction Representation of direction to move Coordinate on grid. Up = 'u', Down = 'd',
+     * Left = 'l', Right = 'r'
+     */
     self.onMoveCoord = function (direction) {
         if (!self.selectedCoord) {
             return;
@@ -358,13 +443,18 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         }
     };
 
+    /**
+     * Removes a coordinate from canvas and Hitbox backed data.
+     *
+     * @param {number} index Position of Coordinate.
+     */
     self.onDeleteCoord = function (index) {
         var canvas = self.canvases[flipperCtrl.position];
 
         // Remove from canvas first so that ID can be used
         canvas.removeCoordinate(index);
 
-        // Remove from backing array using stored ID second, as point was unselected
+        // Remove from backing array using stored ID second, point was unselected
         self.coords.splice(index, 1);
         for (var i = 0; i < self.coords.length; i++) {
             self.coords[i].id = i;
@@ -373,7 +463,10 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         canvas.invalidate();
     };
 
-    self.onDeleteAll = function (index) {
+    /**
+     * Removes all coordinates from canvas and Hitbox backed data.
+     */
+    self.onDeleteAll = function () {
         self.coords.length = 0;
 
         for (var i = 0; i < self.canvases.length; i++) {
@@ -381,14 +474,25 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
         }
     };
 
+    /**
+     * Hides popup dialog without making any changes to data.
+     */
     $scope.hide = function () {
         $mdDialog.hide();
     };
 
+    /**
+     * Cancels popup dialog without making any changes to data.
+     */
     $scope.cancel = function () {
         $mdDialog.cancel();
     };
 
+    /**
+     * Provides updated Hitbox coordinate data to calling controller.
+     *
+     * @param {object} answer Processed Coordinate data to match format originally passed to dialog.
+     */
     $scope.answer = function (answer) {
         $mdDialog.hide(postprocessCoords(self.coords, getDefaults(self.activeHitbox)));
     };
