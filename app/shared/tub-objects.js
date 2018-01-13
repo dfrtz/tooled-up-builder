@@ -30,9 +30,9 @@ function Card() {
 }
 
 /**
- * Parses an generic object into a Card.
+ * Parses a generic object into a Card.
  *
- * @param {object} config Data object representing Card.
+ * @param {object|undefined} config Data object representing Card.
  * @param {object} config.idGroup Group of values that makeup a combined id value.
  * @param {number} config.id Single value representing a combined idGroup.
  * @param {String} config.title Value representing the primary name.
@@ -235,7 +235,7 @@ function CardPack() {
 }
 
 /**
- * Parses an generic object into a CardPack.
+ * Parses a generic object into a CardPack.
  *
  * @param {object} config Data object representing CardPack.
  * @param {String} config.set Text representing the Game that Card will be shared across.
@@ -261,7 +261,7 @@ CardPack.prototype.readObject = function (config) {
 };
 
 /**
- * Performs JSON revival operations when converting from text to object used with JSON parser.
+ * Performs JSON revival operations when converting from text to objects when used with JSON parser.
  *
  * @param {object} key The key of the pair to check for special JSON revival actions.
  * @param {object} value The value of the pair to check for special JSON revival actions.
@@ -350,8 +350,9 @@ CardPack.prototype.mergeCardValues = function (categories) {
  * @returns {CardPack} New CardPack with variables organized for output.
  */
 CardPack.prototype.organizeVariables = function () {
+    var newPack = this.duplicate();
     //TODO
-    return this;
+    return newPack;
 };
 
 /**
@@ -403,20 +404,20 @@ function ExpansionPack() {
 }
 
 /**
- * Parses an generic object into a ExpansionPack.
+ * Parses a generic object into a ExpansionPack.
  *
  * @param {object} config Data object representing ExpansionPack.
  * @param {String} config.set Text representing the Game that data will be shared across.
  * @param {String} config.title Text representing the group of Cards.
  * @param {number} config.version Whole or decimal value representing version.
  * @param {String} config.description Summary of all cards contained in pack.
- * @param {object} config.categories
- * @param {object[]} config.cardValues Array of CardValues that will be used to split Card value sets.
- * @param {object[]} config.titles Set of text arrays representing title format strings in various app locations.
- * @param {object[]} config.subtitles Set of text arrays representing subtitle format strings in various app locations.
- * @param {object[]} config.clocks Array of Clocks that can be used by Tooled Up chess clock.
- * @param {object[]} config.scores Array of Scores which will be used in Tooled Up Matches.
- * @param {object[]} config.actions Array of Actions that will be displayed as shortcuts to users.
+ * @param {String[]} config.categories Array of text labels representing predefined Card categories.
+ * @param {CardValue[]} config.cardValues Array of CardValues that will be used to split Card value sets.
+ * @param {object} config.titles Set of text arrays representing title format strings in various app locations.
+ * @param {object} config.subtitles Set of text arrays representing subtitle format strings in various app locations.
+ * @param {Clock[]} config.clocks Array of Clocks that can be used by Tooled Up chess clock.
+ * @param {Score[]} config.scores Array of Scores which will be used in Tooled Up Matches.
+ * @param {Action[]} config.actions Array of Actions that will be displayed as shortcuts to users.
  */
 ExpansionPack.prototype.readObject = function (config) {
     var newPack = Solari.json.duplicate(config, this.reviver);
@@ -441,22 +442,46 @@ ExpansionPack.prototype.readObject = function (config) {
     this.actions = newPack.actions || [];
 };
 
+/**
+ * Performs JSON revival operations when converting from text to objects when used with JSON parser.
+ *
+ * @param {object} key The key of the pair to check for special JSON revival actions.
+ * @param {object} value The value of the pair to check for special JSON revival actions.
+ * @returns {object} Updated value or existing value if no change.
+ */
 ExpansionPack.prototype.reviver = function (key, value) {
     //TODO Check required objects
 
     return value;
 };
 
+/**
+ * Duplicates existing ExpansionPack while maintaining special object classes.
+ *
+ * @returns {ExpansionPack} New ExpansionPack without any links to existing pack.
+ */
 ExpansionPack.prototype.duplicate = function () {
     var newPack = new ExpansionPack();
     newPack.readObject(this);
     return newPack;
 };
 
+/**
+ * Sorts the variables into predetermined order before conversion to text.
+ *
+ * @returns {ExpansionPack} New ExpansionPack with variables organized for output.
+ */
 ExpansionPack.prototype.organizeVariables = function () {
+    var newPack = this.duplicate();
     //TODO
+    return newPack;
 };
 
+/**
+ * Verifies all Expansion items and pack attributes meet requirements to prevent conflicts and to be read in Tooled Up.
+ *
+ * @returns {boolean} Whether or not all checks passed.
+ */
 ExpansionPack.prototype.validate = function () {
     // TODO Check for missing Images
     // TODO Any other checks that should be performed oustide standard schema
@@ -464,6 +489,11 @@ ExpansionPack.prototype.validate = function () {
     return true;
 };
 
+/**
+ * Generate form information from CardValues for display in DOM.
+ *
+ * @returns {object[]} Array of form sections.
+ */
 ExpansionPack.prototype.parseValueGroupForm = function () {
     function Row() {
         this.type = "section";
@@ -496,6 +526,11 @@ ExpansionPack.prototype.parseValueGroupForm = function () {
     return rows;
 };
 
+/**
+ * Generate schema information from CardValues for display in DOM.
+ *
+ * @returns {object} Set of schema value types stored by CardValue type.
+ */
 ExpansionPack.prototype.parseValueGroupSchema = function () {
     var properties = {};
 
@@ -510,21 +545,58 @@ ExpansionPack.prototype.parseValueGroupSchema = function () {
     return properties;
 };
 
-function CardValue() {
-    this.title = undefined;
-    this.type = "Text";
-    this.default = undefined;
+/**
+ * A Class used to store the information about a Tabletop Gaming Card value.
+ *
+ * @param {object|undefined} cardValue Data object representing CardValue.
+ * @param {String} cardValue.title Text representing summary of a Card value.
+ * @param {String} cardValue.type Text representing the way to parse a value as "Text", "Number", or "TrueFalse".
+ * @param {object} cardValue.default Value that should be used if no named value is found in a Card.
+ * @class
+ */
+function CardValue(cardValue) {
+    var newValue = Solari.json.duplicate(cardValue);
+
+    this.title = newValue.title || undefined;
+    this.type = newValue.type || "Text";
+    this.default = newValue.default || undefined;
 }
 
-function Clock() {
-    this.title = "";
-    this.seconds = 0;
-    this.overtime = [];
-    this.autoOvertime = false;
-    this.icon = "";
-    this.buzzer = "";
+/**
+ * A Class used to store the information representing a chess clock.
+ *
+ * @param {object|undefined} clock Data object representing Clock.
+ * @param {String} clock.title Text summary.
+ * @param {number} clock.seconds Length of time in seconds for the main countdown.
+ * @param {number[]} clock.overtime List of lengths in seconds for each allowed overtime period.
+ * @param {boolean} clock.autoOvertime Whether overtime counters should start automatically instead of wait.
+ * @param {String} clock.icon Canonical filesystem path, or relative path within zip, to image file.
+ * @param {String} clock.buzzeer Canonical filesystem path, or relative path within zip, to sound file..
+ * @class
+ */
+function Clock(clock) {
+    var newClock = Solari.json.duplicate(clock);
+
+    this.title = newClock.title || "";
+    this.seconds = newClock.seconds || 0;
+    this.overtime = newClock.overtime || [];
+    this.autoOvertime = newClock.autoOvertime || false;
+    this.icon = newClock.icon || "";
+    this.buzzer = newClock.buzzer || "";
 }
 
+/**
+ * A Class used to store the information representing a chess clock.
+ *
+ * @param {object|undefined} clock Data object representing Clock.
+ * @param {String} clock.title Text summary.
+ * @param {number} clock.seconds Length of time in seconds for the main countdown.
+ * @param {number[]} clock.overtime List of lengths in seconds for each allowed overtime period.
+ * @param {boolean} clock.autoOvertime Whether overtime counters should start automatically instead of wait.
+ * @param {String} clock.icon Canonical filesystem path, or relative path within zip, to image file.
+ * @param {String} clock.buzzeer Canonical filesystem path, or relative path within zip, to sound file..
+ * @class
+ */
 function Score() {
     this.title = "";
     this.subtitle = "";

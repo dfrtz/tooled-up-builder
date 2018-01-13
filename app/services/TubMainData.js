@@ -83,6 +83,33 @@ function MainData() {
     };
 
     /**
+     * @type {object} ImageWorkerCallbacks Set of callback methods for image workers in a pool.
+     * {method} ImageWorkerCallbacks.run Method to be used by all image work threads,
+     * {method} ImageWorkerCallbacks.initCache Method to be used by WorkerPool on cache initialization
+     */
+    self.ImageWorkerCallbacks = {
+        run: function run(data) {
+            var path = data.path;
+
+            if (self.cache !== undefined) {
+                self.cache.file(path)
+                    .async("base64")
+                    .then(function (content) {
+                        self.postMessage({cmdResult: data.cmd, name: path, data: content});
+                    });
+            }
+        },
+        initCache: function initCache(cache) {
+            JSZip.loadAsync(cache)
+                .then(function succcess(zip) {
+                    self.cache = zip;
+                    self.postMessage({cmdResult: "initCache"});
+                }, function error(error) {
+                });
+        }
+    };
+
+    /**
      * Initializes factory by executing first run operations.
      *
      * Must be called at end of assignments.
@@ -335,34 +362,6 @@ function MainData() {
         }
 
         return self.getImageByIndex(pack, index, $scope);
-    };
-
-    /**
-     * @type {{
-     * run: MainData.ImageWorkerCallbacks.run Method to be used by all image work threads,
-     * initCache: MainData.ImageWorkerCallbacks.initCache Method to be used by WorkerPool on cache init
-     * }}
-     */
-    self.ImageWorkerCallbacks = {
-        run: function run(data) {
-            var path = data.path;
-
-            if (self.cache !== undefined) {
-                self.cache.file(path)
-                    .async("base64")
-                    .then(function (content) {
-                        self.postMessage({cmdResult: data.cmd, name: path, data: content});
-                    });
-            }
-        },
-        initCache: function initCache(cache) {
-            JSZip.loadAsync(cache)
-                .then(function succcess(zip) {
-                    self.cache = zip;
-                    self.postMessage({cmdResult: "initCache"});
-                }, function error(error) {
-                });
-        }
     };
 
     init();
