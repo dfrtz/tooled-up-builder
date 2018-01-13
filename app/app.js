@@ -7,4 +7,4 @@
  * @copyright 2015-2017 Solari Studios, http://solaristudios.com
  * @license MIT
  */
-angular.module('tooledUpBuilder', ['ngMaterial', 'ngAnimate', 'ngRoute', 'ngSanitize', 'schemaForm', 'solDecorator']);
+angular.module("tooledUpBuilder", ["ngMaterial", "ngAnimate", "ngRoute", "ngSanitize", "schemaForm", "solDecorator"]);

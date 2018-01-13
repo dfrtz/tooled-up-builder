@@ -12,17 +12,20 @@ angular.module('tooledUpBuilder').controller('TubXpakSummaryCtrl', ['MainData', 
 
 function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdToast) {
     var self = this;
+    var pack = MainData.xpak;
 
-    this.schemaDataPack = {};
-    this.formDataPack = [];
-
-    this.selections = {
+    self.schemaDataPack = {};
+    self.formDataPack = [];
+    self.selections = {
         page: 0
     };
 
-    // Internal functions
+    /**
+     * Initializes controller by executing first run operations.
+     *
+     * Must be called at end of assignments.
+     */
     function init() {
-        // Load Schemas
         $http({
             url: 'data/schema-xpak-details.json',
             dataType: 'json',
@@ -31,11 +34,10 @@ function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdTo
             headers: {
                 "Content-Type": "application/json"
             }
-        }).success(function(response) {
+        }).success(function (response) {
             self.schemaDataPack = response || {};
         });
 
-        // Load forms
         $http({
             url: 'data/form-xpak-details.json',
             dataType: 'json',
@@ -44,27 +46,29 @@ function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdTo
             headers: {
                 "Content-Type": "application/json"
             }
-        }).success(function(response) {
+        }).success(function (response) {
             self.formDataPack = response || [];
         });
     }
 
-    // External functions
-    this.onPackReset = function() {
+    /**
+     * Prompts user and resets loaded expansion pack.
+     */
+    self.onPackReset = function () {
         var dialog = $mdDialog.confirm()
-              .title("Reset Summary")
-              .textContent("Remove all details about pack? (Cannot be undone)")
-              .targetEvent(event)
-              .ok("Reset Summary")
-              .cancel("Cancel");
+            .title("Reset Summary")
+            .textContent("Remove all details about pack? (Cannot be undone)")
+            .targetEvent(event)
+            .ok("Reset Summary")
+            .cancel("Cancel");
 
-        $mdDialog.show(dialog).then(function() {
-            MainData.xpak.bannerData = "./promo.jpg";
-            MainData.xpak.packData.set = "";
-            MainData.xpak.packData.title = "";
-            MainData.xpak.packData.version = 0;
-            MainData.xpak.packData.description = "";
-            MainData.xpak.packData.categories = "";
+        $mdDialog.show(dialog).then(function () {
+            pack.bannerData = "./promo.jpg";
+            pack.packData.set = "";
+            pack.packData.title = "";
+            pack.packData.version = 0;
+            pack.packData.description = "";
+            pack.packData.categories = "";
 
             // Show undo toast
             var toast = $mdToast.simple()
@@ -75,26 +79,23 @@ function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdTo
                 .position("bottom right")
                 .hideDelay(3000);
 
-            $mdToast.show(toast).then(function(response) {
-                if (response == 'ok') {
+            $mdToast.show(toast).then(function (response) {
+                if (response === 'ok') {
                     //TODO: Undo Card Delete"
                 }
             });
-        }, function() {
-          // No action on cancel
+        }, function () {
+            // No action on cancel
         });
     };
 
-    // Wrapper fucntions for DOM access
-
-    // Add watchers to update UI
-    $scope.$watch(function() { return $scope.formpack; }, function() {
+    // Listen for broadcasts and value changes
+    $scope.$watch(function () {
+        return $scope.formpack;
+    }, function () {
         // Update form in service to allow cross controller validation
         MainData.xpak.formPack = $scope.formpack;
     });
 
-    // Add user event listeners
-
-    // Action to perform on load
     init();
 }
