@@ -18,6 +18,32 @@ angular.module("solDecorator", ["ngMaterial", "ngAnimate", "ngRoute", "ngSanitiz
 
 /**
  * @ngdoc directive
+ * @name solJsonText
+ *
+ * @description
+ * Converts text in pretty printed json.
+ *
+ * @element ANY
+ */
+angular.module("solDecorator").directive("solJsonText", function() {
+    return {
+          restrict: "A",
+          require: "ngModel",
+          link: function(scope, element, attr, ngModel) {
+            function into(input) {
+              return JSON.parse(input);
+            }
+            function out(data) {
+              return JSON.stringify(data, undefined, 4);
+            }
+            ngModel.$parsers.push(into);
+            ngModel.$formatters.push(out);
+          }
+      };
+});
+
+/**
+ * @ngdoc directive
  * @name solLongClick
  *
  * @description
