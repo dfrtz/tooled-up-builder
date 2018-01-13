@@ -360,7 +360,7 @@
                     <md-card class="card-wide">
                         <div id="xpak-card-banner" class="card-banner" sol-backgroud-src="{{tubXpakCtrl.getBannerData()}}">
                             <md-progress-circular class="md-primary md-hue-3" md-diameter="60"
-                                ng-hide="!tubXpakCtrl.loadingActivated" ng-disable="!tubXpakCtrl.loadingActivated"></md-progress-circular>
+                                ng-hide="!tubCpakCtrl.pendingData" ng-disable="!tubCpakCtrl.pendingData"></md-progress-circular>
                             <md-card-title>
                                 <md-card-title-text>
                                     <span class="md-headline"><h3>{{ tubXpakCtrl.getModelData().title || 'No Expansion Selected' }}</h3></span>

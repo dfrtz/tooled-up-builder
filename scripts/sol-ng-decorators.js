@@ -324,7 +324,7 @@ angular.module("solDecorator").directive("solFlipper", ["$window", function ($wi
 
     return {
         restrict: "E",
-        controller: function ($scope, $element, $attrs) {
+        controller: function ($scope) {
             var self = this;
 
             self.width = 0;

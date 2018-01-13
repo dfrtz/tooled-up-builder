@@ -286,7 +286,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
      * @param path
      */
     function deletePack(path) {
-        for (i = 0; i < pack.packData.manifest.length; i++) {
+        for (var i = 0; i < pack.packData.manifest.length; i++) {
             if (pack.packData.manifest[i].path === path) {
                 pack.packData.manifest.splice(i, 1);
                 pack.zipFile.remove(path);
@@ -332,7 +332,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
     self.getPacks = function (extension) {
         var packs = [];
 
-        for (i = 0; i < pack.packData.manifest.length; i++) {
+        for (var i = 0; i < pack.packData.manifest.length; i++) {
             if (Solari.file.getExtension(pack.packData.manifest[i].path) === extension) {
                 packs.push(pack.packData.manifest[i]);
             }

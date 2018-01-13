@@ -11,6 +11,7 @@
 angular.module('tooledUpBuilder').controller('TubDialogPreviewCardCtrl', ['$scope', '$mdDialog', 'card', 'getCachedImageByName', TubDialogPreviewCardCtrl]);
 
 function TubDialogPreviewCardCtrl($scope, $mdDialog, card, getCachedImageByName) {
+    var self = this;
     $scope.card = card;
 
     /**
@@ -21,7 +22,6 @@ function TubDialogPreviewCardCtrl($scope, $mdDialog, card, getCachedImageByName)
      */
     self.getImage = function (name) {
         var image = getCachedImageByName(name);
-
         return "data:image/png;base64," + image.data;
     };
 

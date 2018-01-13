@@ -34,7 +34,7 @@ function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdTo
             headers: {
                 "Content-Type": "application/json"
             }
-        }).success(function(response) {
+        }).success(function (response) {
             self.schemaDataPack = response || {};
         });
 
@@ -46,7 +46,7 @@ function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdTo
             headers: {
                 "Content-Type": "application/json"
             }
-        }).success(function(response) {
+        }).success(function (response) {
             self.formDataPack = response || [];
         });
     }
@@ -54,15 +54,15 @@ function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdTo
     /**
      * Prompts user and resets loaded expansion pack.
      */
-    self.onPackReset = function() {
+    self.onPackReset = function () {
         var dialog = $mdDialog.confirm()
-              .title("Reset Summary")
-              .textContent("Remove all details about pack? (Cannot be undone)")
-              .targetEvent(event)
-              .ok("Reset Summary")
-              .cancel("Cancel");
+            .title("Reset Summary")
+            .textContent("Remove all details about pack? (Cannot be undone)")
+            .targetEvent(event)
+            .ok("Reset Summary")
+            .cancel("Cancel");
 
-        $mdDialog.show(dialog).then(function() {
+        $mdDialog.show(dialog).then(function () {
             pack.bannerData = "./promo.jpg";
             pack.packData.set = "";
             pack.packData.title = "";
@@ -79,17 +79,20 @@ function TubXpakSummaryCtrl(MainData, $scope, $http, $mdColors, $mdDialog, $mdTo
                 .position("bottom right")
                 .hideDelay(3000);
 
-            $mdToast.show(toast).then(function(response) {
+            $mdToast.show(toast).then(function (response) {
                 if (response === 'ok') {
                     //TODO: Undo Card Delete"
                 }
             });
-        }, function() {
-          // No action on cancel
+        }, function () {
+            // No action on cancel
         });
     };
 
-    $scope.$watch(function() { return $scope.formpack; }, function() {
+    // Listen for broadcasts and value changes
+    $scope.$watch(function () {
+        return $scope.formpack;
+    }, function () {
         // Update form in service to allow cross controller validation
         MainData.xpak.formPack = $scope.formpack;
     });

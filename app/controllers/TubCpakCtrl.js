@@ -8,9 +8,9 @@
  * @copyright 2015-2017 Solari Studios, http://solaristudios.com
  * @license MIT
  */
-angular.module("tooledUpBuilder").controller("TubCpakCtrl", ["MainData", "$rootScope", "$scope", "$timeout", "$mdColors", "$mdDialog", "$mdToast", TubCpakCtrl]);
+angular.module("tooledUpBuilder").controller("TubCpakCtrl", ["MainData", "$rootScope", "$scope", "$timeout", TubCpakCtrl]);
 
-function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialog, $mdToast) {
+function TubCpakCtrl(MainData, $rootScope, $scope, $timeout) {
     var self = this;
     var pack = MainData.cpak;
 
@@ -85,7 +85,7 @@ function TubCpakCtrl(MainData, $rootScope, $scope, $timeout, $mdColors, $mdDialo
      * @param {File} file File object to load.
      */
     function processFile(file) {
-        var extension = file.name.split(".").pop();
+        var extension = Solari.file.getExtension(file.name);
         if (extension === "json") {
             Solari.json.readFile(file, function (data) {
                 // Set form model data, and current Card data

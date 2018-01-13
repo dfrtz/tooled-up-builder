@@ -122,6 +122,7 @@ function TubXpakItemsCtrl(MainData, $rootScope, $scope, $timeout, $http, $mdColo
         }
     };
 
+    // Listen for broadcasts and value changes
     $scope.$watch(function () {
         return $scope.formcardvalues;
     }, function () {

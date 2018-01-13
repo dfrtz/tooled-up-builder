@@ -43,7 +43,7 @@ function TubDialogPreviewCardValueSplitCtrl($scope, $mdDialog, cpak, xpak, oldVa
      */
     function testRandomValueRemoval() {
         var count = Math.floor(Math.random() * xpak.cardValues.length);
-        for (i = 0; i < count; i++) {
+        for (var i = 0; i < count; i++) {
             var pos = parseInt(Math.floor(Math.random() * (xpak.cardValues.length - i)));
             xpak.cardValues.splice(pos, 1);
         }

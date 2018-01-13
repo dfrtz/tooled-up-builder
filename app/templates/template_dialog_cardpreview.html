@@ -20,7 +20,7 @@
                     <sol-flipper style="width: 100%; height: 100%; object-fit: contain; display: block; margin: auto;" flip-width="66%" flip-height="66%" ratio="{{getImageRatio()}}">
                         <!-- TODO: Remove 2 sides limit -->
                         <sol-flip-panel ng-repeat="image in card.content | limitTo:2 track by $index">
-                            <img style="width: 100%; height: 100%; object-fit: contain; display: block; margin: auto;" data-ng-src="{{getImage(image)}}"/>
+                            <img style="width: 100%; height: 100%; object-fit: contain; display: block; margin: auto;" data-ng-src="{{previewCtrl.getImage(image)}}"/>
                         </sol-flip-panel>
                     </sol-flipper>
                 </div>

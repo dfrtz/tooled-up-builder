@@ -389,7 +389,8 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
     self.onCardPreview = function (event) {
         $mdDialog.show({
             controller: "TubDialogPreviewCardCtrl",
-            templateUrl: "templates/template_dialog_cardpreview.html",
+            controllerAs: "previewCtrl",
+            templateUrl: "app/templates/template_dialog_cardpreview.html",
             targetEvent: event,
             clickOutsideToClose: true,
             locals: {

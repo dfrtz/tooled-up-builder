@@ -138,7 +138,7 @@ function TubImagesCtrl(MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToas
     self.onImagePreview = function (event, index) {
         $mdDialog.show({
             controller: "TubDialogPreviewImageCtrl",
-            templateUrl: "templates/template_dialog_imagepreview.html",
+            templateUrl: "app/templates/template_dialog_imagepreview.html",
             targetEvent: event,
             clickOutsideToClose: true,
             locals: {
@@ -309,14 +309,30 @@ function TubImagesCtrl(MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToas
         });
     };
 
+    /**
+     * Sets the currently active page in the image grid.
+     *
+     * @param newPage
+     */
     self.onSetImagePage = function (newPage) {
         self.page = newPage;
     };
 
+    /**
+     * Calculates the number of pages in the image grid.
+     *
+     * @returns {number} Maximum amount of pages.
+     */
     self.getImagePageCount = function () {
         return Math.ceil(pack.imageCache.length / self.imagesPerPage);
     };
 
+    /**
+     * Finds the index of the first image in the image cache for a given image grid page.
+     *
+     * @param {number} page Index of the page in the image grid.
+     * @returns {number} Index of the first image in the image cache for this page.
+     */
     self.getImagePageStart = function (page) {
         if (page === undefined) {
             page = self.page;
@@ -324,6 +340,12 @@ function TubImagesCtrl(MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToas
         return page * self.imagesPerPage;
     };
 
+    /**
+     * Finds the index of the last image in the image cache for a given image grid page.
+     *
+     * @param {number} page Index of the page in the image grid.
+     * @returns {number} Index of the last image in the image cache for this page.
+     */
     self.getImagePageEnd = function (page) {
         if (page === undefined) {
             page = self.page;
@@ -333,9 +355,14 @@ function TubImagesCtrl(MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToas
         return page < pack.imageCache.length ? page : pack.imageCache.length;
     };
 
+    /**
+     * Finds an Image in the cache.
+     *
+     * @param {number} index Position of the image in the image grid.
+     * @returns {Image} Image object from the cache at specified position
+     */
     self.getCachedImage = function (index) {
         var arrayIndex = self.page * self.imagesPerPage + index;
-
         return $scope.getCachedImageByIndex(arrayIndex);
     };
 }
@@ -343,6 +370,7 @@ function TubImagesCtrl(MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToas
 function TubCpakImagesCtrl(MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToast) {
     var self = this;
 
+    // Initialize parent controller
     TubImagesCtrl.call(this, MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToast, MainData.getPack("cpak"));
 
     /**
@@ -378,6 +406,7 @@ TubCpakImagesCtrl.prototype.constructor = TubCpakImagesCtrl;
 function TubXpakImagesCtrl(MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToast) {
     var self = this;
 
+    // Initialize parent controller
     TubImagesCtrl.call(this, MainData, $scope, $timeout, $mdColors, $mdDialog, $mdToast, MainData.getPack("xpak"));
 
     /**

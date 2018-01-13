@@ -273,7 +273,6 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
      */
     self.getImage = function (name) {
         var image = getCachedImageByName(name);
-
         return "data:image/png;base64," + image.data;
     };
 
@@ -358,7 +357,7 @@ function TubDialogCardHitboxEditCtrl($scope, $mdDialog, card, version, hitbox, g
      *
      * @param {string} axis Axis of coordinate to edit. Options: x, y, z, or size.
      * @param {number} value New position of selected coordinate on specified axis.
-     * @returns {{x: number, y: number, z: number}} Axis information of selected coordinate if getting, or Undefined if
+     * @returns {number} Axis position information of selected coordinate if getting, or Undefined if
      * setting.
      */
     self.posGetterSetter = function (axis, value) {
