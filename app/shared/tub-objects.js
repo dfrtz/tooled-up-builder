@@ -38,6 +38,7 @@ function Card() {
  * @param {String} config.title Value representing the primary name.
  * @param {String} config.subtitle Value representing the secondary name.
  * @param {String} config.legacy Value representing the tertiary name if deprecated.
+ * @param {String} config.groups Text list of groups that a Card belongs to.
  * @param {number} config.private Side of card to show if it is considered only owner visible.
  * @param {boolean} config.landscape Whether images are oriented in landscape mode.
  * @param {String[]} config.content Array of canonical paths to images within CardPack.
@@ -571,7 +572,7 @@ function CardValue(cardValue) {
  * @param {number[]} clock.overtime List of lengths in seconds for each allowed overtime period.
  * @param {boolean} clock.autoOvertime Whether overtime counters should start automatically instead of wait.
  * @param {String} clock.icon Canonical filesystem path, or relative path within zip, to image file.
- * @param {String} clock.buzzeer Canonical filesystem path, or relative path within zip, to sound file..
+ * @param {String} clock.buzzer Canonical filesystem path, or relative path within zip, to sound file..
  * @class
  */
 function Clock(clock) {
@@ -586,34 +587,51 @@ function Clock(clock) {
 }
 
 /**
- * A Class used to store the information representing a chess clock.
+ * A Class used to store the information representing a game tracking value.
  *
- * @param {object|undefined} clock Data object representing Clock.
- * @param {String} clock.title Text summary.
- * @param {number} clock.seconds Length of time in seconds for the main countdown.
- * @param {number[]} clock.overtime List of lengths in seconds for each allowed overtime period.
- * @param {boolean} clock.autoOvertime Whether overtime counters should start automatically instead of wait.
- * @param {String} clock.icon Canonical filesystem path, or relative path within zip, to image file.
- * @param {String} clock.buzzeer Canonical filesystem path, or relative path within zip, to sound file..
+ * @param {object|undefined} score Data object representing Score.
+ * @param {String} score.title Text summary.
+ * @param {String} score.subtitle Text representing summary shorthand.
+ * @param {number} score.min Minimum allowed value.
+ * @param {number} score.max Maximum allowed value.
+ * @param {number} score.default Starting value.
+ * @param {number} score.multiplier Additional multiplier when showing displayed score.
+ * @param {boolean} score.addToTotal Whether this score contributes to total player score, rather than tracking only.
+ * @param {String} score.icon Canonical filesystem path, or relative path within zip, to image file.
  * @class
  */
-function Score() {
-    this.title = "";
-    this.subtitle = "";
-    this.min = 0;
-    this.max = 0;
-    this.default = 0;
-    this.multiplier = 0;
-    this.addToTotal = false;
-    this.icon = "";
+function Score(score) {
+    var newScore = Solari.json.duplicate(score);
+
+    this.title = newScore.title || "";
+    this.subtitle = newScore.subtitle || "";
+    this.min = newScore.min || 0;
+    this.max = newScore.max || 0;
+    this.default = newScore.default || 0;
+    this.multiplier = newScore.multiplier || 0;
+    this.addToTotal = newScore.addToTotal || false;
+    this.icon = newScore.icon || "";
 }
 
-function Action() {
-    this.type = "";
-    this.title = "";
-    this.link = "";
-    this.icon = "";
-    this.actions = [];
+/**
+ * A Class used to store the information representing dynamically built menu actions.
+ *
+ * @param {object|undefined} action Data object representing Score.
+ * @param {String} action.type Text representing type of action as "action" or "group".
+ * @param {String} action.title Text summary.
+ * @param {String} action.link URI action will launch.
+ * @param {String} action.icon Relative path within zip to image file.
+ * @param {Action[]} action.actions Array of additional Actions if this is a of type "group".
+ * @class
+ */
+function Action(action) {
+    var newAction = Solari.json.duplicate(action);
+
+    this.type = newAction.type || "";
+    this.title = newAction.title || "";
+    this.link = newAction.link || "";
+    this.icon = newAction.icon || "";
+    this.actions = newAction.actions || [];
 }
 
 /**
