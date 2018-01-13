@@ -147,7 +147,7 @@
                     <md-card class="card-wide">
                         <div id="cpak-card-banner" class="card-banner" sol-backgroud-src="{{tubCpakCtrl.getBannerData()}}">
                             <md-progress-circular class="md-primary md-hue-3" md-diameter="60"
-                                ng-hide="!tubCpakCtrl.loadingActivated" ng-disable="!tubCpakCtrl.loadingActivated"></md-progress-circular>
+                                ng-hide="!tubCpakCtrl.pendingData" ng-disable="!tubCpakCtrl.pendingData"></md-progress-circular>
                             <md-card-title>
                                 <md-card-title-text>
                                     <span class="md-headline"><h3>{{ tubCpakCtrl.getModelData().title || 'No Cards Selected' }}</h3></span>
@@ -360,7 +360,7 @@
                     <md-card class="card-wide">
                         <div id="xpak-card-banner" class="card-banner" sol-backgroud-src="{{tubXpakCtrl.getBannerData()}}">
                             <md-progress-circular class="md-primary md-hue-3" md-diameter="60"
-                                ng-hide="!tubXpakCtrl.loadingActivated" ng-disable="!tubXpakCtrl.loadingActivated"></md-progress-circular>
+                                ng-hide="!tubCpakCtrl.pendingData" ng-disable="!tubCpakCtrl.pendingData"></md-progress-circular>
                             <md-card-title>
                                 <md-card-title-text>
                                     <span class="md-headline"><h3>{{ tubXpakCtrl.getModelData().title || 'No Expansion Selected' }}</h3></span>
@@ -581,7 +581,7 @@
                     <md-card class="card-wide">
                         <div id="apak-card-banner" class="card-banner" sol-backgroud-src="{{tubApakCtrl.getBannerData()}}">
                             <md-progress-circular class="md-primary md-hue-3" md-diameter="60"
-                                ng-hide="!tubApakCtrl.processingNew" ng-disable="!tubApakCtrl.processingNew"></md-progress-circular>
+                                ng-hide="!tubApakCtrl.pendingData" ng-disable="!tubApakCtrl.pendingData"></md-progress-circular>
                             <md-card-title>
                                 <md-card-title-text>
                                     <span class="md-headline"><h3>{{tubApakCtrl.getBannerTitle()}}</h3></span>

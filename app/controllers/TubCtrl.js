@@ -7,7 +7,7 @@
  * @copyright 2015-2017 David Fritz
  * @license MIT
  */
-angular.module('tooledUpBuilder').controller('TubCtrl', ['MainData', '$window', '$scope', '$http', '$mdColors', '$mdDialog', '$mdToast', '$mdSidenav', TubCtrl]);
+angular.module("tooledUpBuilder").controller("TubCtrl", ["MainData", "$window", "$scope", "$http", "$mdColors", "$mdDialog", "$mdToast", "$mdSidenav", TubCtrl]);
 
 function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToast, $mdSidenav) {
     var self = this;
@@ -16,15 +16,15 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
         page: 0
     };
     self.pageShortcuts = [
-        {name: "Guild Ball", data: 'schema/generic.schema'}
+        {name: "Guild Ball", data: "schema/generic.schema"}
     ];
     self.pages = [
-        {title: "Card Packs", icon: 'home'},
-        {title: "Expansions", icon: 'videogame_asset'},
-        {title: "All-In-One", icon: 'work'}
+        {title: "Card Packs", icon: "home"},
+        {title: "Expansions", icon: "videogame_asset"},
+        {title: "All-In-One", icon: "work"}
     ];
 
-    $scope.decorator = 'bootstrap-decorator';
+    $scope.decorator = "bootstrap-decorator";
 
     /**
      * Initializes controller by executing first run operations.
@@ -32,12 +32,18 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
      * Must be called at end of assignments.
      */
     function init() {
+        if (window.Worker) {
+            console.log("Web Worker support detected. Multithreading enabled.");
+        } else {
+            console.log("Web Workers are not supported by your browser. Try with the latest Google Chrome: <a href=\"https://www.google.com/chrome/\">Google Chrome Download</a>");
+        }
+
         $http({
             //TODO Non request way to load this library into worker pools
-            url: 'vendor/jszip/3.1.3/jszip.min.js',
-            dataType: 'json',
-            method: 'GET',
-            data: '',
+            url: "vendor/jszip/3.1.3/jszip.min.js",
+            dataType: "json",
+            method: "GET",
+            data: "",
             headers: {
                 "Content-Type": "application/text"
             }
@@ -52,7 +58,7 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
     /**
      * Toggles navigation drawer and calls listening functions.
      *
-     * @param {*} side Angular representation of the Drawer that was toggled.
+     * @param {string} side Directional representation of the Drawer that was toggled. Left or Right.
      */
     self.onToggleDrawer = function (side) {
         $mdSidenav(side)
@@ -67,7 +73,7 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
      * @param {number} page Index of the selected page from shortcut menu.
      */
     self.onLoadPage = function (page) {
-        self.onToggleDrawer('left');
+        self.onToggleDrawer("left");
         $scope.onSelectTab(page);
     };
 
@@ -89,10 +95,10 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
             };
         }
 
-        self.onToggleDrawer('left');
+        self.onToggleDrawer("left");
         $mdDialog.show({
             controller: DialogController,
-            templateUrl: 'app/templates/template_dialog_about.html',
+            templateUrl: "app/templates/template_dialog_about.html",
             targetEvent: event,
             clickOutsideToClose: true
         });
@@ -127,7 +133,7 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
 
         for (var key in errors) {
             for (var i = 0; i < errors[key].length; i++) {
-                messages.push(errors[key][i].$name + ' is required.');
+                messages.push(errors[key][i].$name + " is required.");
             }
         }
 
@@ -141,7 +147,7 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
      * @param {string} id Unique identifier of an HTML element.
      */
     $scope.onClick = function (id) {
-        document.getElementById(id).dispatchEvent(new MouseEvent('click'));
+        document.getElementById(id).dispatchEvent(new MouseEvent("click"));
     };
 
     /**
@@ -153,13 +159,13 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
         var toast = $mdToast.simple()
             .textContent(message)
             .highlightAction(true)
-            .highlightClass('md-accent')
+            .highlightClass("md-accent")
             .position("bottom right")
             .hideDelay(3000);
         $mdToast.show(toast);
     };
 
-    // Wrapper functions for DOM access
+    // Expose methods to DOM
     $scope.getThemeColor = $mdColors.getThemeColor;
     $scope.range = function (count) {
         return Solari.utils.range(count);
@@ -170,5 +176,6 @@ function TubCtrl(MainData, $window, $scope, $http, $mdColors, $mdDialog, $mdToas
     $scope.getFileExtension = function (name) {
         return Solari.file.getExtension(name);
     };
+
     init();
 }

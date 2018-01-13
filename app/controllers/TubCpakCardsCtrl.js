@@ -8,7 +8,7 @@
  * @copyright 2015-2017 David Fritz
  * @license MIT
  */
-angular.module('tooledUpBuilder').controller('TubCpakCardsCtrl', ['MainData', '$scope', '$timeout', '$http', '$mdColors', '$mdDialog', '$mdToast', TubCpakCardsCtrl]);
+angular.module("tooledUpBuilder").controller("TubCpakCardsCtrl", ["MainData", "$scope", "$timeout", "$http", "$mdColors", "$mdDialog", "$mdToast", TubCpakCardsCtrl]);
 
 function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialog, $mdToast) {
     var self = this;
@@ -44,10 +44,10 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
      */
     function init() {
         $http({
-            url: 'data/schema-cpak-card.json',
-            dataType: 'json',
-            method: 'GET',
-            data: '',
+            url: "data/schema-cpak-card.json",
+            dataType: "json",
+            method: "GET",
+            data: "",
             headers: {
                 "Content-Type": "application/json"
             }
@@ -57,10 +57,10 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         });
 
         $http({
-            url: 'data/form-cpak-card.json',
-            dataType: 'json',
-            method: 'GET',
-            data: '',
+            url: "data/form-cpak-card.json",
+            dataType: "json",
+            method: "GET",
+            data: "",
             headers: {
                 "Content-Type": "application/json"
             }
@@ -68,6 +68,8 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
             self.formDataModelOriginal = response || [];
             self.formDataModel = injectSpecialButtons(Solari.json.duplicate(self.formDataModelOriginal));
         });
+
+        initDragAndDrop();
     }
 
     /**
@@ -77,13 +79,13 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
      * @returns {*} New object representing form data with button templates injected.
      */
     function injectSpecialButtons(model) {
-        Solari.json.inject(model, 'replaceImageType', 'type', 'template');
-        Solari.json.inject(model, 'replaceImageTemplate', 'template', imagePreviewTemplate);
-        Solari.json.inject(model, 'replaceImagePreview', 'preview', self.onCardPreview);
+        Solari.json.inject(model, "replaceImageType", "type", "template");
+        Solari.json.inject(model, "replaceImageTemplate", "template", imagePreviewTemplate);
+        Solari.json.inject(model, "replaceImagePreview", "preview", self.onCardPreview);
 
-        Solari.json.inject(model, 'replaceHitboxType', 'type', 'template');
-        Solari.json.inject(model, 'replaceHitboxTemplate', 'template', hitboxPreviewTemplate);
-        Solari.json.inject(model, 'replaceHitboxEdit', 'edit', editHitbox);
+        Solari.json.inject(model, "replaceHitboxType", "type", "template");
+        Solari.json.inject(model, "replaceHitboxTemplate", "template", hitboxPreviewTemplate);
+        Solari.json.inject(model, "replaceHitboxEdit", "edit", editHitbox);
 
         return model;
     }
@@ -118,13 +120,13 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
                 pack.packData.cards.push(newPack.cards[i]);
             }
 
-            var message = newPack.cards.length + ' Card' + (newPack.cards.length > 1 ? 's' : '') + ' imported';
+            var message = newPack.cards.length + " Card" + (newPack.cards.length > 1 ? "s" : "") + " imported";
             $scope.simpleToast(message);
         }
     }
 
     /**
-     * Process data set for and valid Cards.
+     * Process data set for any valid Cards.
      *
      * @param {*} data Object representing a card pack.
      */
@@ -133,13 +135,12 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
             importCards(data);
         }
 
-        // Always decrement processing count in case file was read but invalid
         self.pendingData--;
         checkUploadStatus();
     }
 
     /**
-     * Sorts and updates UI after all pending loads complete.
+     * Updates UI after all pending loads complete.
      */
     function checkUploadStatus() {
         if (self.pendingData === 0) {
@@ -148,12 +149,17 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
             // Update form
             $scope.$digest();
             $timeout(function () {
-                $scope.$emit('resizeMsg');
+                $scope.$emit("resizeMsg");
             });
             self.onCardSelect(self.selection);
         }
     }
 
+    /**
+     * Processes a zip compressed file to validate if it contains CardPack data.
+     *
+     * @param {JSZip} zip Zipped file object to load.
+     */
     function processZip(zip) {
         var configs = Solari.utils.sortArray(zip.file(/json$/i), "name");
 
@@ -172,26 +178,33 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         }
     }
 
-    function errorProcessingZip(e) {
+    /**
+     * Updates user and internal processing counter during a failure to load.
+     *
+     * @param {object} error Object containing an
+     */
+    function errorProcessingZip(error) {
         readData(null);
-        console.log("Unable to load cpak: " + e.message);
+        console.log("Unable to load cpak: " + error.message);
     }
 
+    /**
+     * Dynamically creates form and schema representing card value groups and injects into DOM.
+     */
     function updateValueGroupSchemas() {
-        // Create new form, and add new rows before applying to scope
+        // Create new form, and add custom rows before applying to scope
         var model = Solari.json.duplicate(self.formDataModelOriginal);
-        var rows = MainData.xpak.packData.parseValueGroupForm();
+        var form = MainData.xpak.packData.parseValueGroupForm();
+        var schema = MainData.xpak.packData.parseValueGroupSchema();
 
-        // Assign final form. Separate step required to trigger angular-schema-form parsing
+        // Assign final form. Separate step is required to trigger angular-schema-form parsing
         injectSpecialButtons(model);
-        Solari.json.inject(model, 'replaceCategoryItems', 'items', rows);
+        Solari.json.inject(model, "replaceCategoryItems", "items", form);
         self.formDataModel = model;
 
         // Create new schema, and add properties before applying to scope
         var tempSchema = Solari.json.duplicate(self.schemaDataModelOriginal);
-        tempSchema.properties.versions.items.properties.valuesGroup.properties = MainData.xpak.packData.parseValueGroupSchema();
-
-        // Assign final schema. Separate step required for angular-schema-form parsing
+        tempSchema.properties.versions.items.properties.valuesGroup.properties = schema;
         self.schemaDataModel = tempSchema;
 
         // Manually update UI
@@ -199,17 +212,23 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
             $scope.$apply();
         });
         $timeout(function () {
-            $scope.$emit('resizeMsg');
+            $scope.$emit("resizeMsg");
         });
     }
 
+    /**
+     * Displays hitbox editor dialog.
+     *
+     * @param {number} versionIndex Version of the card to load into dialog.
+     * @param {number} hitboxIndex Which hitbox from the version to edit.
+     */
     function editHitbox(versionIndex, hitboxIndex) {
         var card = pack.packData.cards[self.selection];
 
         $mdDialog.show({
-            controller: 'TubDialogCardHitboxEditCtrl',
-            controllerAs: 'editorCtrl',
-            templateUrl: 'templates/template_dialog_cardhitboxeditor.html',
+            controller: "TubDialogCardHitboxEditCtrl",
+            controllerAs: "editorCtrl",
+            templateUrl: "app/templates/template_dialog_cardhitboxeditor.html",
             parent: angular.element(document.body),
             //clickOutsideToClose: true,
             locals: {
@@ -218,22 +237,24 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
                 hitbox: hitboxIndex,
                 getCachedImageByName: $scope.getCachedImageByName
             }
-        })
-            .then(function ok(values) {
-                card.versions[versionIndex].hitboxes[hitboxIndex].values = values;
-                $scope.simpleToast(card.title + ' hitbox values updated.');
-            }, function cancel() {
-                // No action on cancel
-            });
+        }).then(function ok(values) {
+            card.versions[versionIndex].hitboxes[hitboxIndex].values = values;
+            $scope.simpleToast(card.title + " hitbox values updated.");
+        }, function cancel() {
+            // No action on cancel
+        });
     }
 
-    // External functions
+    /**
+     * Processes files to load Card data from various extension types.
+     *
+     * @param {File[]} files Array of files to process.
+     */
     self.onCardImport = function (files) {
         if (!files) {
             return;
         }
 
-        // We can only access user selected file from web input
         self.pendingData += (files.length || 0);
         for (var i = 0; i < files.length; i++) {
             var file = files[i];
@@ -244,43 +265,52 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
                 continue;
             }
 
-            var extension = file.name.split('.').pop();
-
-            if (extension == "json") {
+            var extension = Solari.file.getExtension(file.name);
+            if (extension === "json") {
                 Solari.json.readFile(file, readData);
-            } else if (extension == "cpak") {
-                JSZip.loadAsync(file)
-                    .then(processZip, errorProcessingZip);
+            } else if (extension === "cpak") {
+                JSZip.loadAsync(file).then(processZip, errorProcessingZip);
             } else {
                 self.pendingData--;
                 checkUploadStatus();
-                alert(file.name + " is not valid file. Please select a \".cpak\" or \".json\" file and try again.");
+                alert(file.name + ' is not valid file. Please select a ".cpak" or ".json" file and try again.');
             }
         }
     };
 
+    /**
+     * Retrieves card name with optional formatted text.
+     *
+     * @param {number} index Position of Card in cache.
+     * @param {boolean} html Whether to add special html formatting to tag.
+     *
+     * @returns String representing card name.
+     */
     self.getCardName = function (index, html) {
         var card = pack.packData.cards[index];
         var name = card.title;
         var legacy = card.legacy;
 
         if (!name) {
-            // Default display name
             name = "Card " + index;
         }
 
         if (legacy) {
-            // Add legacy title if it has one
             if (html === undefined || html) {
-                name += '<br /><div class="md-caption">' + legacy + '</div>';
+                name += '<br /><div class="md-caption">' + legacy + "</div>";
             } else {
-                name += ' - ' + legacy;
+                name += " - " + legacy;
             }
         }
 
         return name;
     };
 
+    /**
+     * Updates internal tracking information based on actively selected card.
+     *
+     * @param {number} index Position of Card in cache.
+     */
     self.onCardSelect = function (index) {
         if (!pack.packData.cards.length) {
             // No items left, clear form and hide
@@ -289,8 +319,7 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
             return;
         }
 
-        if (index == -1) {
-            // Ensure a valid position was chosen
+        if (index === -1) {
             index = 0;
         }
 
@@ -298,11 +327,17 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         self.selection = index;
     };
 
+    /**
+     * Adds a new blank Card to cache.
+     */
     self.onCardAdd = function () {
         pack.packData.cards.push(new Card());
         self.onCardSelect(pack.packData.cards.length - 1);
     };
 
+    /**
+     * Duplicates currently selected Card and increases revision by one.
+     */
     self.onCardDuplicate = function () {
         var newCard = Solari.json.duplicate(self.cardDataCurrent);
         newCard.idGroup.revision++;
@@ -311,6 +346,9 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         self.onCardSelect(self.selection + 1);
     };
 
+    /**
+     * Removes currently selected Card from cache.
+     */
     self.onCardDelete = function () {
         var cardName = self.getCardName(self.selection, false);
 
@@ -325,17 +363,16 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
             pack.packData.cards.splice(self.selection, 1);
             self.onCardSelect(self.selection - 1);
 
-            // Show undo toast
             var toast = $mdToast.simple()
-                .textContent('Deleted ' + cardName)
-                //.action('UNDO')
+                .textContent("Deleted " + cardName)
+                //.action("UNDO")
                 .highlightAction(true)
-                .highlightClass('md-accent')
+                .highlightClass("md-accent")
                 .position("bottom right")
                 .hideDelay(3000);
 
             $mdToast.show(toast).then(function (response) {
-                if (response == 'ok') {
+                if (response === "ok") {
                     //TODO: Undo Card Delete"
                 }
             });
@@ -344,10 +381,16 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         });
     };
 
+    /**
+     * Displays popup dialog to preview current Card configuration.
+     *
+     * @param {event} event Event generated by element.
+     */
     self.onCardPreview = function (event) {
         $mdDialog.show({
-            controller: 'TubDialogPreviewCardCtrl',
-            templateUrl: 'templates/template_dialog_cardpreview.html',
+            controller: "TubDialogPreviewCardCtrl",
+            controllerAs: "previewCtrl",
+            templateUrl: "app/templates/template_dialog_cardpreview.html",
             targetEvent: event,
             clickOutsideToClose: true,
             locals: {
@@ -357,12 +400,17 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         });
     };
 
+    /**
+     * Sorts Card cache and updates UI.
+     */
     self.onCardSort = function () {
         pack.packData.sortCards();
-
         self.onCardSelect(self.selection);
     };
 
+    /**
+     * Removes all Cards from Card PAck.
+     */
     self.onCardReset = function () {
         var dialog = $mdDialog.confirm()
             .title("Remove All Cards")
@@ -377,15 +425,15 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
 
             // Show undo toast
             var toast = $mdToast.simple()
-                .textContent('Cards Reset')
-                //.action('UNDO')
+                .textContent("Cards Reset")
+                //.action("UNDO")
                 .highlightAction(true)
-                .highlightClass('md-accent')
+                .highlightClass("md-accent")
                 .position("bottom right")
                 .hideDelay(3000);
 
             $mdToast.show(toast).then(function (response) {
-                if (response == 'ok') {
+                if (response === "ok") {
                     //TODO: Undo Card Delete"
                 }
             });
@@ -394,30 +442,32 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         });
     };
 
+    /**
+     * Updates all Cards and versions with Expansion Pack value pairs.
+     */
     self.onCardValueUpdate = function () {
         if (pack.lastXpakSplitValues.length <= 0 || pack.packData.cards.length <= 0) {
-            pack.lastXpakSplitValues = Solari.json.duplicate(MainData.xpak.packData.cardValues);
-
             // Values are not currently split, do not prompt user
+            pack.lastXpakSplitValues = Solari.json.duplicate(MainData.xpak.packData.cardValues);
             pack.packData.splitCardValues(pack.lastXpakSplitValues);
-
-            // Update form data
             updateValueGroupSchemas();
-
             $scope.simpleToast("Card Pack categories updated to match Expansion Pack");
         } else if (JSON.stringify(pack.lastXpakSplitValues) !== JSON.stringify(MainData.xpak.packData.cardValues)) {
-            // Prompt user to decide if values should be updated
+            // Values changed, prompt user to decide if values should be updated
             self.onCardValueUpdatePreview();
         } else {
             $scope.simpleToast("Card Pack categories identical to Expansion Pack, no update required.");
         }
     };
 
+    /**
+     * Displays dialog demonstrating changes to all Cards and versions based on Expansion Pack value pairs.
+     */
     self.onCardValueUpdatePreview = function () {
         $mdDialog.show({
-            controller: 'TubDialogPreviewCardValueSplitCtrl',
-            controllerAs: 'previewCtrl',
-            templateUrl: 'templates/template_dialog_cardupdatepreview.html',
+            controller: "TubDialogPreviewCardValueSplitCtrl",
+            controllerAs: "previewCtrl",
+            templateUrl: "templates/template_dialog_cardupdatepreview.html",
             parent: angular.element(document.body),
             clickOutsideToClose: true,
             locals: {
@@ -426,32 +476,34 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
                 xpak: MainData.xpak.packData.duplicate(),
                 oldValues: Solari.json.duplicate(pack.lastXpakSplitValues)
             }
-        })
-            .then(function (merge) {
-                if (merge) {
-                    // Merge with original values, maintaining original csv order
-                    pack.packData.mergeCardValues(pack.lastXpakSplitValues);
-                } else {
-                    // Only merge with new values, dropping old csv order
-                    pack.packData.mergeCardValues(MainData.xpak.packData.cardValues);
-                }
+        }).then(function (merge) {
+            if (merge) {
+                // Merge with original values, maintaining original order
+                pack.packData.mergeCardValues(pack.lastXpakSplitValues);
+            } else {
+                // Only merge with new values, dropping old order
+                pack.packData.mergeCardValues(MainData.xpak.packData.cardValues);
+            }
 
-                // Split card csv back into groupings
-                pack.packData.splitCardValues(MainData.xpak.packData.cardValues);
-                pack.lastXpakSplitValues = Solari.json.duplicate(MainData.xpak.packData.cardValues);
-
-                // Update form data
-                updateValueGroupSchemas();
-
-                $scope.simpleToast("Card Pack categories synchronized with Expansion Pack.");
-            }, function () {
-                // No action on cancel
-            });
+            // Split card values back into groupings
+            pack.packData.splitCardValues(MainData.xpak.packData.cardValues);
+            pack.lastXpakSplitValues = Solari.json.duplicate(MainData.xpak.packData.cardValues);
+            updateValueGroupSchemas();
+            $scope.simpleToast("Card Pack categories synchronized with Expansion Pack.");
+        }, function () {
+            // No action on cancel
+        });
     };
 
-    // Wrapper functions for DOM access
+    // Listen for broadcasts and value changes
+    $scope.$on("selectCard", function (event, args) {
+        self.onCardSelect(args.position);
+    });
 
-    // Add watchers to update UI
+    $scope.$on("updateCpakCardForm", function (event, args) {
+        self.onCardValueUpdate();
+    });
+
     $scope.$watch(function () {
         return $scope.formcards;
     }, function () {
@@ -465,24 +517,10 @@ function TubCpakCardsCtrl(MainData, $scope, $timeout, $http, $mdColors, $mdDialo
         // Required to update the form UI size if content changes
         if (newValue !== oldValue) {
             $timeout(function () {
-                $scope.$emit('resizeMsg');
+                $scope.$emit("resizeMsg");
             });
-        } else {
         }
     }, true);
 
-    // Add user event listeners
-
-    // Add broadcast listeners
-    $scope.$on('selectCard', function (event, args) {
-        self.onCardSelect(args.position);
-    });
-
-    $scope.$on('updateCpakCardForm', function (event, args) {
-        self.onCardValueUpdate();
-    });
-
-    // Action to perform on load
     init();
-    initDragAndDrop();
 }

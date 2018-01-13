@@ -1,4 +1,13 @@
-angular.module('tooledUpBuilder').controller('TubDialogPreviewCardValueSplitCtrl', ['$scope', '$mdDialog', 'cpak', 'xpak', 'oldValues', TubDialogPreviewCardValueSplitCtrl]);
+/**
+ * @file A Tooled Up - Builder app controller to preview changes to Card Expansion pack data.
+ *
+ * @author David Fritz
+ * @version 1.0.0
+ *
+ * @copyright 2015-2017 David Fritz
+ * @license MIT
+ */
+angular.module("tooledUpBuilder").controller("TubDialogPreviewCardValueSplitCtrl", ["$scope", "$mdDialog", "cpak", "xpak", "oldValues", TubDialogPreviewCardValueSplitCtrl]);
 
 function TubDialogPreviewCardValueSplitCtrl($scope, $mdDialog, cpak, xpak, oldValues) {
     var self = this;
@@ -8,15 +17,16 @@ function TubDialogPreviewCardValueSplitCtrl($scope, $mdDialog, cpak, xpak, oldVa
     self.cpakWithoutMerge = cpak.duplicate();
     self.xpak = xpak;
     self.oldValues = oldValues;
-
     self.cardIndex = 0;
-
     self.merge = false;
 
+    /**
+     * Initializes controller by executing first run operations.
+     *
+     * Must be called at end of assignments.
+     */
     function init() {
-        // Uncomment line to simulate a random user expansion change
-        //testRandomValueRemoval();
-
+        //testRandomValueRemoval(); // Uncomment line to simulate a random user expansion change
         // Update card pack demonstrating an original value merge first
         self.cpakWithMerge.mergeCardValues(oldValues);
         self.cpakWithMerge.splitCardValues(xpak.cardValues);
@@ -28,32 +38,48 @@ function TubDialogPreviewCardValueSplitCtrl($scope, $mdDialog, cpak, xpak, oldVa
         self.generateRandomCard();
     }
 
+    /**
+     * Removes a random value pair from the Xpak value sets for debugging.
+     */
     function testRandomValueRemoval() {
         var count = Math.floor(Math.random() * xpak.cardValues.length);
-        for (i = 0; i < count; i++) {
+        for (var i = 0; i < count; i++) {
             var pos = parseInt(Math.floor(Math.random() * (xpak.cardValues.length - i)));
             xpak.cardValues.splice(pos, 1);
         }
     }
 
-    this.generateRandomCard = function() {
+    /**
+     * Selects a random card to be the active index for this controller.
+     */
+    self.generateRandomCard = function () {
         self.cardIndex = Math.floor(Math.random() * cpak.cards.length);
     };
 
-    this.getCardName = function() {
+    /**
+     * Provides name of currently selected with special formatting.
+     *
+     * @returns {string} Name of currently selected card.
+     */
+    self.getCardName = function () {
         var card = cpak.cards[self.cardIndex];
         var name = card.title;
         var legacy = card.legacy;
 
         if (legacy) {
-            name += ' - ' + legacy;
+            name += " - " + legacy;
         }
 
         return name;
     };
 
-    this.getOriginalCardValue = function(index) {
-        // Default to original pack
+    /**
+     * Returns a string based representation of a Card value using the original expansion pack value sets.
+     *
+     * @param {number} index Position of the value group in the expansion pack.
+     * @returns {string} Title of the value if it exists or an informative placeholder
+     */
+    self.getOriginalCardValue = function (index) {
         var card = cpak.cards[self.cardIndex];
 
         var version = card.versions[0];
@@ -63,23 +89,29 @@ function TubDialogPreviewCardValueSplitCtrl($scope, $mdDialog, cpak, xpak, oldVa
             if (value !== undefined) {
                 return value.toString();
             } else {
-                return oldValues[index].title || '>> No Data Found <<';
+                return oldValues[index].title || ">> No Data Found <<";
             }
         } else {
-            return '<< No Data Found >>';
+            return "<< No Data Found >>";
         }
     };
 
-    this.getFinalCardValue = function(index, packType) {
-        // Default to original pack
+    /**
+     * Returns a string based representation of a Card value using the new expansion pack value sets.
+     *
+     * @param {number} index Position of the value group in the expansion pack.
+     * @param {string} packType How to create final Card values.Valid choices: merge, nomerge
+     * @returns {string} Title of the value if it exists or an informative placeholder
+     */
+    self.getFinalCardValue = function (index, packType) {
         var card = cpak.cards[self.cardIndex];
 
-        switch(packType) {
-            case 'merge': {
+        switch (packType) {
+            case "merge": {
                 card = self.cpakWithMerge.cards[self.cardIndex];
                 break;
             }
-            case 'nomerge': {
+            case "nomerge": {
                 card = self.cpakWithoutMerge.cards[self.cardIndex];
                 break;
             }
@@ -92,31 +124,33 @@ function TubDialogPreviewCardValueSplitCtrl($scope, $mdDialog, cpak, xpak, oldVa
             if (value !== undefined) {
                 return value.toString();
             } else {
-                return oldValues[index].title || '>> No Data Found <<';
+                return oldValues[index].title || ">> No Data Found <<";
             }
         } else {
-            return '<< No Data Found >>';
+            return "<< No Data Found >>";
         }
     };
 
-    this.debugCards = function() {
-        console.log("Original Card\n" + JSON.stringify(cpak.cards[self.cardIndex], null, 2));
-        console.log("Merged Card\n" + JSON.stringify(self.cpakWithMerge.cards[self.cardIndex], null, 2));
-        console.log("Unmerged Card\n" + JSON.stringify(self.cpakWithoutMerge.cards[self.cardIndex], null, 2));
-    };
-
-    $scope.hide = function() {
+    /**
+     * Hides popup dialog without making any changes to data.
+     */
+    $scope.hide = function () {
         $mdDialog.hide();
     };
 
-    $scope.cancel = function() {
+    /**
+     * Hides popup dialog without making any changes to data.
+     */
+    $scope.cancel = function () {
         $mdDialog.cancel();
     };
 
-    $scope.answer = function(answer) {
+    /**
+     * Hides popup dialog and returns choice of whether to merge pack data to calling controller.
+     */
+    $scope.answer = function (answer) {
         $mdDialog.hide(self.merge);
     };
 
-    // Action to perform on load
     init();
 }

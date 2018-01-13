@@ -38,21 +38,21 @@ var Solari = (function (parent) {
         event.preventDefault();
 
         // Only update drag region classes
-        if (event.target.classList.contains('drag-region')) {
+        if (event.target.classList.contains("drag-region")) {
             if (event.type === "dragover") {
-                if (!event.target.classList.contains('hover')) {
-                    event.target.classList.add('hover');
+                if (!event.target.classList.contains("hover")) {
+                    event.target.classList.add("hover");
                 }
             } else {
-                event.target.classList.remove('hover');
+                event.target.classList.remove("hover");
             }
         }
     }
 
     /**
-     * Converts hexidecimal color string into rgba formatted integer string.
+     * Converts hexadecimal color string into rgba formatted integer string.
      *
-     * @param {string} hex Text representing a hexidecimal (0-9A-F) color.
+     * @param {string} hex Text representing a hexadecimal (0-9A-F) color.
      * @returns {string} String representing colors as 'rgba(red, green, blue, alpha)'.
      */
     function hexToRGBA(hex) {
@@ -60,13 +60,13 @@ var Solari = (function (parent) {
             return undefined;
         }
 
-        hex = hex.replace('#', '');
+        hex = hex.replace("#", "");
 
         if (hex.length === 8) {
-            a = parseInt(hex.substring(0, 2), 16);
-            r = parseInt(hex.substring(2, 4), 16);
-            g = parseInt(hex.substring(4, 6), 16);
-            b = parseInt(hex.substring(6, 8), 16);
+            var a = parseInt(hex.substring(0, 2), 16);
+            var r = parseInt(hex.substring(2, 4), 16);
+            var g = parseInt(hex.substring(4, 6), 16);
+            var b = parseInt(hex.substring(6, 8), 16);
         } else if (hex.length === 4) {
             a = parseInt(hex.substring(0, 1), 16);
             r = parseInt(hex.substring(1, 2), 16);
@@ -76,17 +76,17 @@ var Solari = (function (parent) {
             return undefined;
         }
 
-        return 'rgba(' + r + ',' + g + ',' + b + ',' + (a / 255) + ')';
+        return "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
     }
 
     /**
-     * Converts four values representing red, green, blue, and alpha into hexidecimal string.
+     * Converts four values representing red, green, blue, and alpha into hexadecimal string.
      *
      * @param {string|number} r Red value from 0 to 255
      * @param {string|number} g Green value from 0 to 255
      * @param {string|number} b Blue value from 0 to 255
      * @param {string|number} a Alpha value from 0 to 255
-     * @returns {string} String representing color as hexidecimal format.
+     * @returns {string} String representing color as hexadecimal format.
      */
     function rgbaToHex(r, g, b, a) {
         a = Solari.utils.padZeros(parseInt(a).toString(16), 2);
@@ -94,29 +94,29 @@ var Solari = (function (parent) {
         g = Solari.utils.padZeros(parseInt(g).toString(16), 2);
         b = Solari.utils.padZeros(parseInt(b).toString(16), 2);
 
-        return '#' + a + r + g + b;
+        return "#" + a + r + g + b;
     }
 
     /**
-     * Converts rgba formatted csv values into hexidecimal.
+     * Converts rgba formatted csv values into hexadecimal.
      *
      * @param {string} rgba Color string formatted as 'rgba(0-255, 0-255, 0-255, 0-1.0)'.
-     * @returns {string} String reprenting color in hexidecimal format.
+     * @returns {string} String reprenting color in hexadecimal format.
      */
     function rgbaStringToHex(rgba) {
         if (rgba === undefined) {
             return undefined;
         }
 
-        rgba = rgba.replace('rgba(', '');
-        rgba = rgba.replace(')', '');
-        rgba = rgba.replace(' ', '');
-        rgba = rgba.split(',');
+        rgba = rgba.replace("rgba(", "");
+        rgba = rgba.replace(")", "");
+        rgba = rgba.replace(" ", "");
+        rgba = rgba.split(",");
 
-        a = parseInt(parseFloat(rgba[3]) * 255) || 0;
-        r = parseInt(rgba[0]) || 0;
-        g = parseInt(rgba[1]) || 0;
-        b = parseInt(rgba[2]) || 0;
+        var a = parseInt(parseFloat(rgba[3]) * 255) || 0;
+        var r = parseInt(rgba[0]) || 0;
+        var g = parseInt(rgba[1]) || 0;
+        var b = parseInt(rgba[2]) || 0;
 
         return rgbaToHex(r, g, b, a);
     }
@@ -130,17 +130,17 @@ var Solari = (function (parent) {
      * @param {context} ctx Context to draw pattern.
      */
     function drawText(x, y, text, ctx) {
-        ctx.font = '14pt Calibri';
-        ctx.textAlign = 'center';
+        ctx.font = "14pt Calibri";
+        ctx.textAlign = "center";
         ctx.lineWidth = 1;
 
         ctx.shadowColor = "black";
         ctx.shadowBlur = 7;
 
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = "black";
         ctx.strokeText(text, x, y);
 
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = "white";
         ctx.fillText(text, x, y);
 
         ctx.shadowBlur = 0;
@@ -245,7 +245,7 @@ var Solari = (function (parent) {
      * @param {number} y Y-Axis center position.
      * @param {number} z Z-Axis center position.
      * @param {number} size Distance from center to edge of shape.
-     * @param {string} color Color formatted as RGBA or hexidecimal string.
+     * @param {string} color Color formatted as RGBA or hexadecimal string.
      * @param {number} shape Number representing shape. 0 = Circle, 1 = Square.
      * @param {number} id Unique numerical identifier to reference this object.
      * @class
@@ -255,7 +255,7 @@ var Solari = (function (parent) {
         this.y = y || 0;
         this.z = z || 0;
         this.size = size || 20;
-        this.color = color || hexToRGBA('#AAAAAAAA');
+        this.color = color || hexToRGBA("#AAAAAAAA");
         this.shape = shape || 0;
         this.id = id || undefined;
     }
@@ -299,8 +299,8 @@ var Solari = (function (parent) {
     /**
      * Verifies if a position is within the borders of this object when drawn.
      *
-     * @param x X-Axis position to verify.
-     * @param y Y-Axis position to verify.
+     * @param {number} x X-Axis position to verify.
+     * @param {number} y Y-Axis position to verify.
      * @returns {boolean} True if contained in this object's borders, False otherwise.
      */
     Coordinate.prototype.contains = function (x, y) {
@@ -321,7 +321,7 @@ var Solari = (function (parent) {
         var self = this;
 
         self.canvas = canvas;
-        self.ctx = canvas.getContext('2d');
+        self.ctx = canvas.getContext("2d");
         self.canvasUpdateTimer = null;
         self.canvasUpdateInterval = 1000 / 60;
 
@@ -343,18 +343,18 @@ var Solari = (function (parent) {
         self.onDoubleClickListener = undefined;
         self.onSelectListener = undefined;
 
-        self.highlightColor = '#CC0000';
+        self.highlightColor = "#CC0000";
         self.highlightWidth = 2;
 
         self.lockTouch = false;
 
-        canvas.addEventListener('selectstart', function (event) {
+        canvas.addEventListener("selectstart", function (event) {
             // Prevent text highlighting
             event.preventDefault();
             return false;
         }, false);
 
-        canvas.addEventListener('mousedown', function (event) {
+        canvas.addEventListener("mousedown", function (event) {
             if (self.lockTouch) {
                 return;
             }
@@ -385,7 +385,7 @@ var Solari = (function (parent) {
             self.invalidate();
         }, true);
 
-        canvas.addEventListener('mousemove', function (event) {
+        canvas.addEventListener("mousemove", function (event) {
             if (self.lockTouch) {
                 return;
             }
@@ -400,7 +400,7 @@ var Solari = (function (parent) {
             }
         }, true);
 
-        canvas.addEventListener('mouseup', function (event) {
+        canvas.addEventListener("mouseup", function (event) {
             if (self.lockTouch) {
                 return;
             }
@@ -409,7 +409,7 @@ var Solari = (function (parent) {
             self.stopUpdates();
         }, true);
 
-        canvas.addEventListener('dblclick', function (event) {
+        canvas.addEventListener("dblclick", function (event) {
             if (self.lockTouch) {
                 return;
             }

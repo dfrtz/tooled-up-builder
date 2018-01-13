@@ -8,11 +8,10 @@
  * @copyright 2015-2017 David Fritz
  * @license MIT
  */
-angular.module('tooledUpBuilder').controller('TubXpakCtrl', ['MainData', '$rootScope', '$scope', '$http', '$timeout', '$mdColors', '$mdDialog', '$mdToast', TubXpakCtrl]);
+angular.module("tooledUpBuilder").controller("TubXpakCtrl", ["MainData", "$rootScope", "$scope", "$http", "$timeout", TubXpakCtrl]);
 
-function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $mdDialog, $mdToast) {
+function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout) {
     var self = this;
-
     var pack = MainData.xpak;
 
     self.activeCards = {
@@ -21,29 +20,22 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         items: true,
         images: true
     };
+    self.pendingData = 0;
 
-    self.loadingActivated = false;
-
-    // Internal functions
+    /**
+     * Initializes controller by executing first run operations.
+     *
+     * Must be called at end of assignments.
+     */
     function init() {
-        // Load Schemas
-        /*$http({
-            url: 'data/form-model-guildball.json',
-            dataType: 'json',
-            method: 'GET',
-            data: '',
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).success(function(response) {
-            pack.packData.cardValues = response || [];
-
-            setTimeout(function() {
-                $rootScope.$broadcast('updateCardForm', {});
-            }, 5000);
-        });*/
+        document.getElementById("xpak-file-input").addEventListener("change", function () {
+            Solari.ui.onSelectFiles(event, loadFiles);
+        });
     }
 
+    /**
+     * Resets all data for the currently open Expansion Pack.
+     */
     function resetXpakData() {
         pack.zipFile = new JSZip();
         pack.imageCache.length = 0;
@@ -51,22 +43,27 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         pack.imageWorkerPool.initCache();
     }
 
-    function loadXpakFile(ofiles) {
+    /**
+     * Loads Xpak related data from files into the current Xpak.
+     *
+     * @param {File[]} ofiles Array of files to parse.
+     */
+    function loadFiles(ofiles) {
         // Copy the file list locally and reset the input for user to load again
         var files = [];
         for (var i = 0; i < ofiles.length; i++) {
             files.push(ofiles[i]);
         }
-        document.getElementById('file-uploads').reset();
+        document.getElementById("file-uploads").reset();
 
-        // We can only access user selected file from web input
+        // We can only access user selected files from web input
         var file = files[0];
         if (!file) {
             return;
         }
 
-        var extension = file.name.split('.').pop();
-        if (extension == "json") {
+        var extension = Solari.file.getExtension(file.name);
+        if (extension === "json") {
             Solari.json.readFile(file, function (data) {
                 resetXpakData();
 
@@ -74,31 +71,32 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                 pack.packData = MainData.preprocessXpak(data);
                 pack.originalName = pack.packData.title;
 
-                $rootScope.$broadcast('updateCpakCardForm');
+                $rootScope.$broadcast("updateCpakCardForm");
 
                 // Update form
                 $scope.$digest();
             });
-        } else if (extension == "xpak") {
-            self.loadingActivated = true;
-
-            JSZip.loadAsync(file)
-                .then(processZip, errorProcessingZip);
+        } else if (extension === "xpak") {
+            self.pendingData += files.length;
+            JSZip.loadAsync(file).then(processZip, errorProcessingZip);
         } else {
             $scope.simpleToast(file.name + " is not valid file. Select a \".xpak\" or \".json\" and try again.");
-            return;
         }
     }
 
+    /**
+     * Processes a zip compressed file to load valid Xpak information.
+     *
+     * @param {JSZip} zip Zipped file object to load.
+     */
     function processZip(zip) {
-        // Find config files, image files, and alphabetize
         var configs = Solari.utils.sortArray(zip.file(/json$/i), "name");
         var images = Solari.utils.sortArray(zip.file(/jpg$|png$/i), "name");
 
         // Load JSON
-        //if (configs.length == 1) {
-        // TODO Prompt user if more than 1 JSON found
-        if (configs.length > 0) {
+        // if (configs.length === 1) {
+        if (configs.length !== 0) {
+            //TODO more intelligently find the parent config than choosing index 0
             zip.file(configs[0].name)
                 .async("string")
                 .then(function success(content) {
@@ -109,7 +107,7 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                     pack.packData = MainData.preprocessXpak(JSON.parse(content));
                     pack.originalName = pack.packData.title;
 
-                    $rootScope.$broadcast('updateCpakCardForm');
+                    $rootScope.$broadcast("updateCpakCardForm");
 
                     // Load images
                     var imageCount = images.length;
@@ -122,23 +120,46 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                         }
                     }
 
-                    self.loadingActivated = false;
-                    $scope.$digest();
-                }, function error(e) {
-                    self.loadingActivated = false;
+                    self.pendingData--;
+                    checkLoadStatus();
+                }, function error(error) {
+                    self.pendingData--;
+                    checkLoadStatus();
                     $scope.simpleToast("Unable to load " + configs[0]);
-                    return;
                 });
-        } else {
+        } else if (configs.length > 1) {
             // TODO Prompt user if more than 1 JSON found
         }
     }
 
-    function errorProcessingZip(e) {
-        self.loadingActivated = false;
-        $scope.simpleToast(Solari.utils.format("Error reading {0} : {1}", file.name, e.message));
+    /**
+     * Updates user and internal processing counter during a failure to load.
+     *
+     * @param {object} error Object containing an
+     */
+    function errorProcessingZip(error) {
+        self.pendingData--;
+        $scope.simpleToast(Solari.utils.format("Error reading {0} : {1}", file.name, error.message));
     }
 
+    /**
+     * Checks for pending work and notifies user if all work is completed.
+     */
+    function checkLoadStatus() {
+        if (self.pendingData <= 0) {
+            $timeout(function () {
+                $scope.$emit("resizeMsg");
+                $scope.$digest();
+            });
+            $scope.simpleToast("Loading completed.");
+        }
+    }
+
+    /**
+     * Saves a zip compressed Xpak file consisting of all adapter information.
+     *
+     * @param {boolean} saveToAIO Whether to save the data to the current Apak adapter.
+     */
     function saveXpakFile(saveToAIO) {
         // Preprocess the file for saving
         var json = MainData.postprocessXpak(pack.packData);
@@ -146,48 +167,29 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         var newTitle = pack.packData.title;
 
         // TODO allow saving JSON only
-        //Solari.file.saveObjectURL(newTitle + '.json', Solari.json.makeObjectURL(json));
+        //Solari.file.saveObjectURL(newTitle + ".json", Solari.json.makeObjectURL(json));
 
         if (newTitle !== oldTitle) {
             // Remove original title based files
-            pack.zipFile.remove(oldTitle + ".json")
-                .remove(oldTitle + ".png")
-                .remove(oldTitle + "-bg.jpg");
-
-            // Add back image files if they exist in cache
-            for (var i = 0, replacedItems = 0; i < pack.imageCache.length && replacedItems < 2; i++) {
-                var item = pack.imageCache[i];
-
-                if (item.path == oldTitle + ".png") {
-                    pack.zipFile.file(newTitle + ".png", item.data, {base64: true});
-                    item.path = newTitle + ".png";
-                    replacedItems++;
-                } else if (item.path == oldTitle + "-bg.jpg") {
-                    pack.zipFile.file(newTitle + "-bg.jpg", item.data, {base64: true});
-                    item.path = newTitle + "-bg.jpg";
-                    replacedItems++;
-                }
-            }
-
+            pack.zipFile.remove(oldTitle + ".json");
+            //TODO remove and add back background images based on name
             pack.originalName = newTitle;
         } else {
             // Remove only the configuration file
             pack.zipFile.remove(newTitle + ".json");
         }
 
-        // Add new JSON to xpak
         if (!pack.prettyPrintSave) {
             pack.zipFile.file(newTitle + ".json", JSON.stringify(json));
         } else {
             pack.zipFile.file(newTitle + ".json", JSON.stringify(json, undefined, 2));
         }
 
-        // Generate and save final file
         pack.zipFile.generateAsync({type: "arraybuffer"})
             .then(function (content) {
-                var name = newTitle + '.xpak';
+                var name = newTitle + ".xpak";
                 if (saveToAIO) {
-                    $rootScope.$broadcast('sendToAIO', {
+                    $rootScope.$broadcast("sendToAIO", {
                         path: name,
                         data: content
                     });
@@ -197,9 +199,14 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
             });
     }
 
+    /**
+     * Trigger form validation and save process.
+     *
+     * @param {boolean} sendToAIO Whether to save the data to the current Apak adapter.
+     */
     function onSave(sendToAIO) {
         // First we broadcast an event so all fields validate themselves
-        $scope.$broadcast('schemaFormValidate');
+        $scope.$broadcast("schemaFormValidate");
 
         // Then we check if the forms are valid
         if (pack.packData.validate() && pack.formCardValues.$valid) {
@@ -208,23 +215,51 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
             // TODO Dialog with list of errors
             $scope.listErrors(pack.formCardValues.$error);
             $scope.simpleToast("Invalid data. Resolve outstanding alerts and try again.");
-            return;
         }
     }
 
-    // External functions
+    /**
+     * Receives a data pack from another controller.
+     *
+     * @param {event} event Broadcasted event data from controller.
+     * @param {object} args Arguments containing data about incoming pack.
+     */
+    function receivePack(event, args) {
+        $scope.onSelectTab(1);
+        self.pendingData++;
+        processZip(args.data);
+    }
+
+    /**
+     * Checks the pack for image information that can be set as an element's background.
+     *
+     * @returns {string|undefined} Data that can be set as an elements background.
+     */
     self.getBannerData = function () {
         return pack.bannerData;
     };
 
+    /**
+     * Retrieves the pack for Model information that can be used for DOM access.
+     *
+     * @returns {string|undefined} Pack data that can be accessed by DOM controller scripts.
+     */
     self.getModelData = function () {
         return pack.packData;
     };
 
+    /**
+     * Triggers a save action to the Apak.
+     */
     self.onSendToAIO = function () {
         onSave(true);
     };
 
+    /**
+     * Validates pack data as fields are updated and saves data.
+     *
+     * @param {*} form JSON schema form to validate.
+     */
     $scope.onSubmit = function (form) {
         onSave(false);
     };
@@ -238,7 +273,9 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         return MainData.getImageByName(pack, name, $scope);
     };
 
-    // Add watchers to update UI
+    // Listen for broadcasts and value changes
+    $scope.$on("sendToXpak", receivePack);
+
     $scope.$watch(function () {
         return pack.packData.title;
     }, function (newValue, oldValue) {
@@ -250,27 +287,14 @@ function TubXpakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                     .then(function success(content) {
                         pack.bannerData = "data:image/jpeg;base64," + content;
                         $scope.$apply();
-                    }, function error(e) {
+                    }, function error(error) {
                         pack.bannerData = "./images/promo.jpg";
                     });
-            } catch (e) {
+            } catch (error) {
                 pack.bannerData = "./images/promo.jpg";
             }
         }
     });
 
-    $scope.$on('sendToXpak', function (event, args) {
-        $scope.onSelectTab(1);
-
-        self.loadingActivated = true;
-        processZip(args.data);
-    });
-
-    // Add user event listeners
-    document.getElementById('xpak-file-input').addEventListener('change', function () {
-        Solari.ui.onSelectFiles(event, loadXpakFile);
-    });
-
-    // Action to perform on load
     init();
 }

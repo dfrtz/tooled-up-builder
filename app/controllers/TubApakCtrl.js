@@ -8,7 +8,7 @@
  * @copyright 2015-2017 David Fritz
  * @license MIT
  */
-angular.module('tooledUpBuilder').controller('TubApakCtrl', ['MainData', '$rootScope', '$scope', '$http', '$timeout', '$mdColors', '$mdDialog', '$mdToast', TubApakCtrl]);
+angular.module("tooledUpBuilder").controller("TubApakCtrl", ["MainData", "$rootScope", "$scope", "$http", "$timeout", "$mdColors", "$mdDialog", "$mdToast", TubApakCtrl]);
 
 function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $mdDialog, $mdToast) {
     var self = this;
@@ -23,19 +23,14 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         page: 0
     };
     self.tabs = [
-        {page: 0, title: 'Cards', subtitle: 'card packs', type: 'cpak', disabled: false},
-        {page: 1, title: 'Expansions', subtitle: 'expansion packs', type: 'xpak', disabled: false},
-        {page: 2, title: 'Themes', subtitle: 'theme packs', type: 'tpak', disabled: true}
+        {page: 0, title: "Cards", subtitle: "card packs", type: "cpak", disabled: false},
+        {page: 1, title: "Expansions", subtitle: "expansion packs", type: "xpak", disabled: false},
+        {page: 2, title: "Themes", subtitle: "theme packs", type: "tpak", disabled: true}
     ];
     self.packs = [
-        'cpak'
+        "cpak"
     ];
     self.pendingData = 0;
-
-    $scope.$on('sendToAIO', receivePack);
-    document.getElementById('apak-file-input').addEventListener('change', function () {
-        Solari.ui.onSelectFiles(event, loadFiles);
-    });
 
     /**
      * Initializes controller by executing first run operations.
@@ -43,12 +38,9 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
      * Must be called at end of assignments.
      */
     function init() {
-        /* Check if browser supports Worker for multithreading or not */
-        if (window.Worker) {
-            console.log("Web Worker support detected. Multithreading enabled.");
-        } else {
-            console.log("Web Workers are not supported by your browser. Try with the latest Google Chrome: <a href=\"https://www.google.com/chrome/\">Google Chrome Download</a>");
-        }
+        document.getElementById("apak-file-input").addEventListener("change", function () {
+            Solari.ui.onSelectFiles(event, loadFiles);
+        });
     }
 
     /**
@@ -60,7 +52,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
     }
 
     /**
-     * Loads new pack files into the current apak.
+     * Loads Apak related data from files into the current apak.
      *
      * @param {File[]} ofiles Array of files to parse.
      */
@@ -75,18 +67,18 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                 duplicates++;
             }
         }
-        document.getElementById('file-uploads').reset();
+        document.getElementById("file-uploads").reset();
 
         if (duplicates) {
-            var message = Solari.utils.format('{0} Duplicate{1} skipped', duplicates, (duplicates > 1 ? 's' : ''));
+            var message = Solari.utils.format("{0} Duplicate{1} skipped", duplicates, (duplicates > 1 ? "s" : ""));
             var toast = $mdToast.simple()
                 .textContent(message)
                 .highlightAction(true)
-                .highlightClass('md-accent')
+                .highlightClass("md-accent")
                 .position("bottom right")
                 .hideDelay(3000);
             $mdToast.show(toast).then(function (response) {
-                if (response === 'ok') {
+                if (response === "ok") {
                 }
             });
         }
@@ -94,7 +86,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         if (files.length > 0) {
             self.pendingData += files.length;
             $timeout(function () {
-                $scope.$emit('resizeMsg');
+                $scope.$emit("resizeMsg");
             });
 
             for (i = 0; i < files.length; i++) {
@@ -153,11 +145,11 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         }
 
         if (duplicates) {
-            var message = Solari.utils.format('{0} Duplicate{1} skipped', duplicates, (duplicates > 1 ? 's' : ''));
+            var message = Solari.utils.format("{0} Duplicate{1} skipped", duplicates, (duplicates > 1 ? "s" : ""));
             var toast = $mdToast.simple()
                 .textContent(message)
                 .highlightAction(true)
-                .highlightClass('md-accent')
+                .highlightClass("md-accent")
                 .position("bottom right")
                 .hideDelay(3000);
             $mdToast.show(toast);
@@ -246,23 +238,23 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         }
 
         var dialog = $mdDialog.prompt()
-            .title('Save All-In-One Pack')
-            .textContent('Choose a name to describe pack')
-            .placeholder('File name')
-            .ariaLabel('Save All-In-One Pack')
-            .initialValue('')
+            .title("Save All-In-One Pack")
+            .textContent("Choose a name to describe pack")
+            .placeholder("File name")
+            .ariaLabel("Save All-In-One Pack")
+            .initialValue("")
             .targetEvent(event)
-            .ok('Save')
-            .cancel('Cancel');
+            .ok("Save")
+            .cancel("Cancel");
 
         $mdDialog.show(dialog).then(function (result) {
-            if (result !== undefined && result !== '') {
+            if (result !== undefined && result !== "") {
                 //TODO Strip invalid characters
-                //result = result.replace(/([^a-z0-9/.\'\s-]+)/gi, '');
+                //result = result.replace(/([^a-z0-9/.\'\s-]+)/gi, "");
             } else {
                 var d = new Date();
                 result = Solari.utils.format(
-                    'AIOPack_{0}-{1}-{2}T{3}{4}{5}',
+                    "AIOPack_{0}-{1}-{2}T{3}{4}{5}",
                     d.getFullYear(),
                     Solari.utils.padZeros(d.getMonth(), 2),
                     Solari.utils.padZeros(d.getDate(), 2),
@@ -282,7 +274,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
 
             pack.zipFile.generateAsync({type: "arraybuffer"})
                 .then(function (content) {
-                    Solari.file.saveBlob(result + '.apak', new Blob([content]));
+                    Solari.file.saveBlob(result + ".apak", new Blob([content]));
                 });
         }, function () {
             // No action on cancel
@@ -294,7 +286,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
      * @param path
      */
     function deletePack(path) {
-        for (i = 0; i < pack.packData.manifest.length; i++) {
+        for (var i = 0; i < pack.packData.manifest.length; i++) {
             if (pack.packData.manifest[i].path === path) {
                 pack.packData.manifest.splice(i, 1);
                 pack.zipFile.remove(path);
@@ -319,7 +311,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
      */
     self.getBannerTitle = function () {
         var len = pack.packData.manifest.length;
-        return len > 0 ? (len + ' Pack' + (len > 1 ? 's' : '') + ' Loaded') : 'No All-In-One Pack Selected';
+        return len > 0 ? (len + " Pack" + (len > 1 ? "s" : "") + " Loaded") : "No All-In-One Pack Selected";
     };
 
     /**
@@ -340,7 +332,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
     self.getPacks = function (extension) {
         var packs = [];
 
-        for (i = 0; i < pack.packData.manifest.length; i++) {
+        for (var i = 0; i < pack.packData.manifest.length; i++) {
             if (Solari.file.getExtension(pack.packData.manifest[i].path) === extension) {
                 packs.push(pack.packData.manifest[i]);
             }
@@ -363,12 +355,12 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
                         var ext = Solari.file.getExtension(path);
                         var broadcast;
 
-                        if (ext === 'cpak') {
-                            broadcast = 'sendToCpak';
-                        } else if (ext === 'xpak') {
-                            broadcast = 'sendToXpak';
+                        if (ext === "cpak") {
+                            broadcast = "sendToCpak";
+                        } else if (ext === "xpak") {
+                            broadcast = "sendToXpak";
                         } else {
-                            $scope.simpleToast('No editor found for file type: ' + ext);
+                            $scope.simpleToast("No editor found for file type: " + ext);
                             return;
                         }
 
@@ -397,15 +389,16 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
 
             // Show undo toast
             var toast = $mdToast.simple()
-                .textContent('Removed ' + path)
+                .textContent("Removed " + path)
+                //.action("UNDO")
                 .highlightAction(true)
-                .highlightClass('md-accent')
+                .highlightClass("md-accent")
                 .position("bottom right")
                 .hideDelay(3000);
 
-            //TODO allow user to revert delete
             $mdToast.show(toast).then(function (response) {
-                if (response === 'ok') {
+                if (response === "ok") {
+                    //TODO allow user to revert delete
                 }
             });
         }, function cancel() {
@@ -446,26 +439,26 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         }
 
         var dialog = $mdDialog.prompt()
-            .title('Rename Pack')
-            .textContent('Choose a new name for: ' + path)
-            .placeholder('File name')
-            .ariaLabel('Rename Pack')
+            .title("Rename Pack")
+            .textContent("Choose a new name for: " + path)
+            .placeholder("File name")
+            .ariaLabel("Rename Pack")
             .initialValue(path)
             .targetEvent(event)
-            .ok('Rename')
-            .cancel('Cancel');
+            .ok("Rename")
+            .cancel("Cancel");
 
         $mdDialog.show(dialog).then(function (result) {
-            if (result !== undefined && result !== '') {
+            if (result !== undefined && result !== "") {
                 //TODO Strip invalid characters
-                //result = result.replace(/([^a-z0-9/.\'\s-]+)/gi, '');
+                //result = result.replace(/([^a-z0-9/.\'\s-]+)/gi, "");
             } else {
-                $scope.simpleToast('Invalid name. Please try again.');
+                $scope.simpleToast("Invalid name. Please try again.");
                 return;
             }
 
             pack.zipFile.file(path)
-                .async('arraybuffer')
+                .async("arraybuffer")
                 .then(function success(content) {
                     pack.zipFile.remove(path).file(result, content);
                     pack.packData.manifest[index].path = result;
@@ -487,7 +480,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         var tab = self.tabs[self.selections.page];
 
         if (self.getPacks(tab.type) <= 0) {
-            $scope.simpleToast('No packs to remove');
+            $scope.simpleToast("No packs to remove");
             return;
         }
 
@@ -513,15 +506,16 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
 
             // Show undo toast
             var toast = $mdToast.simple()
-                .textContent('Removed all ' + tab.subtitle)
+                .textContent("Removed all " + tab.subtitle)
+                //.action("UNDO")
                 .highlightAction(true)
-                .highlightClass('md-accent')
+                .highlightClass("md-accent")
                 .position("bottom right")
                 .hideDelay(3000);
 
-            //TODO allow user to undo pack type reset
             $mdToast.show(toast).then(function (response) {
-                if (response === 'ok') {
+                if (response === "ok") {
+                    //TODO allow user to undo pack type reset
                 }
             });
         }, function cancel() {
@@ -534,8 +528,9 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
      */
     self.onResetAll = function () {
         var dialog = $mdDialog.confirm()
-            .title('Reset All Packs')
-            .textContent('Delete all packs? (Cannot be undone)')
+            .title("Reset All Packs")
+            .textContent("Delete all packs? (Cannot be undone)")
+            //.action("UNDO")
             .targetEvent(event)
             .ok("Delete All")
             .cancel("Cancel");
@@ -550,15 +545,15 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
 
             // Show undo toast
             var toast = $mdToast.simple()
-                .textContent('Removed all packs')
+                .textContent("Removed all packs")
                 .highlightAction(true)
-                .highlightClass('md-accent')
+                .highlightClass("md-accent")
                 .position("bottom right")
                 .hideDelay(3000);
 
-            //TODO allow user to undo full pack reset
             $mdToast.show(toast).then(function (response) {
-                if (response === 'ok') {
+                if (response === "ok") {
+                    //TODO allow user to undo full pack reset
                 }
             });
         }, function cancel() {
@@ -597,15 +592,14 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
      */
     $scope.onSubmit = function (form) {
         // First we broadcast an event so all fields validate themselves
-        $scope.$broadcast('schemaFormValidate');
+        $scope.$broadcast("schemaFormValidate");
 
         // Then we check if the forms are valid
-        //TODO Check forms too: if (pack.packData.validate() && pack.formPackValues.$valid) {
         if (pack.packData.validate()) {
+        //TODO Check forms too: if (pack.packData.validate() && pack.formPackValues.$valid) {
             saveApakFile();
         } else {
             // TODO Dialog with list of errors
-            //$scope.listErrors(pack.formPackValues.$error);
             $scope.simpleToast("Invalid data. Resolve outstanding alerts and try again.");
         }
     };
@@ -618,14 +612,6 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
     $scope.getCachedImageByIndex = function (index) {
         return MainData.getImageByIndex(pack, index, $scope);
     };
-
-    $scope.$watch(function () {
-        return pack.packData.title;
-    }, function (newValue, oldValue) {
-        if (newValue !== oldValue) {
-            $scope.$apply();
-        }
-    });
 
     /**
      * Receives a data pack from another controller.
@@ -641,7 +627,7 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
         if (pack.packData.contains(path)) {
             var dialog = $mdDialog.confirm()
                 .title("Overwrite Pack")
-                .textContent(Solari.utils.format('Overwrite existing {0}? (Cannot be undone)', path))
+                .textContent(Solari.utils.format("Overwrite existing {0}? (Cannot be undone)", path))
                 //.targetEvent(event)
                 .ok("Overwrite")
                 .cancel("Cancel");
@@ -654,15 +640,15 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
 
                 // Show undo toast
                 var toast = $mdToast.simple()
-                    .textContent('Replaced ' + path)
+                    .textContent("Replaced " + path)
                     .highlightAction(true)
-                    .highlightClass('md-accent')
+                    .highlightClass("md-accent")
                     .position("bottom right")
                     .hideDelay(3000);
 
-                //TODO allow user to undo replacement
                 $mdToast.show(toast).then(function (response) {
-                    if (response === 'ok') {
+                    if (response === "ok") {
+                        //TODO allow user to undo replacement
                     }
                 });
             }, function cancel() {
@@ -673,6 +659,17 @@ function TubApakCtrl(MainData, $rootScope, $scope, $http, $timeout, $mdColors, $
             onLoad({name: args.path}, args.data);
         }
     }
+
+    // Listen for broadcasts and value changes
+    $scope.$on("sendToAIO", receivePack);
+
+    $scope.$watch(function () {
+        return pack.packData.title;
+    }, function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+            $scope.$apply();
+        }
+    });
 
     init();
 }
