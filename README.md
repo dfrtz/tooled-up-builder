@@ -15,5 +15,5 @@ https://play.google.com/store/apps/details?id=com.solaristudios.decker
 2. Use simple Python server from root of repository:
 `python3 -m http.server`
 
-###This project is currently hosted online at the following:
+### This project is currently hosted online at the following:
 http://tooledup.solaristudios.com/builder/
