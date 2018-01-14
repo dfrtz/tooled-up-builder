@@ -15,5 +15,5 @@ To install the primary application, visit the following:
 2. Use simple Python server from root of repository:
 `python3 -m http.server`
 
-###This project is currently hosted online at the following:  
+### This project is currently hosted online at the following:  
 [Tooled Up - Builder](http://tooledup.solaristudios.com/builder/)
